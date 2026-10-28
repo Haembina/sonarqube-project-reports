@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Issue, coverage and duplication reports for SonarQube Community Build projects, branches and pull requests.",
+  "description": "One downloadable report per SonarQube Community Build project, branch or pull request: the quality gate, measures, issues, hotspots, coverage and duplications.",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@eslint/json": "^2.1.1",
