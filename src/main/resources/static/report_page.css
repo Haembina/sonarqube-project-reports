@@ -1,3 +1,8 @@
+div:has(> .haembina-reports) {
+  height: 100%;
+  overflow-y: auto;
+}
+
 .haembina-reports {
   box-sizing: border-box;
   width: min(40rem, 100vw);
