@@ -1,6 +1,6 @@
 {
   "name": "haembina-project-reports",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "One downloadable report per SonarQube Community Build project, branch or pull request: the quality gate, measures, issues, hotspots, coverage and duplications.",

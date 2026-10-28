@@ -2,6 +2,13 @@
 
 Written by `@haembina/release`, never by hand (rule D9).
 
+## 0.2.1 (2026-10-28)
+
+### Bug Fixes
+
+* the Reports page scrolls in a window shorter than it
+* the plugin's description names everything a report holds
+
 ## 0.2.0 (2026-10-28)
 
 ### Features
