@@ -1,6 +1,6 @@
 {
   "name": "haembina-project-reports",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Issue, coverage and duplication reports for SonarQube Community Build projects, branches and pull requests.",
