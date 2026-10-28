@@ -1,0 +1,37 @@
+Android Insomnia Regular Version 1.0
+
+Do insomniac androids dream of electric sleep?
+
+Designed by Michael W. Moss
+
+https://michaelwmoss.com
+Contact me at mechanismatic@gmail.com for questions or feedback.
+
+Created using Birdfont by Johan Mattsson
+http://birdfont.org/
+
+9/24/2015
+
+
+Copyright and Licensing:
+This work is licensed under a Creative Commons Attribution 4.0 International License. http://creativecommons.org/licenses/by/4.0/
+
+
+-------------------------------------------------------------------------------
+Changes made by Haembina
+
+The file shipped here is not the one downloaded from the author. It has been
+subset to Latin-1 plus common punctuation and converted from TrueType to WOFF2,
+which took it from 35 KB to roughly 7 KB. No glyph was redrawn and no outline
+was altered.
+
+CC BY 4.0 asks that modifications be indicated, and this paragraph is that
+notice. The same statement is inside the font file itself, in name record 10,
+so it travels with the file if this text does not.
+
+This file travels with the font in the @haembina/brand package. Every product
+that draws the face gives attribution to Michael W. Moss, with a link to the
+licence, where its own readers find credits: its terms of use, its Impressum,
+or its About screen.
+
+Converted to TrueType from the subset WOFF2 in @haembina/brand for PDF rendering; no letterform was redrawn.

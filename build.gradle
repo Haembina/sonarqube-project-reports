@@ -1,0 +1,113 @@
+plugins {
+    id('java')
+    id('jacoco')
+    id('com.gradleup.shadow') version('9.6.1')
+    id('net.ltgt.errorprone') version('5.1.1')
+    id('info.solidsoft.pitest') version('1.19.0') apply(false)
+}
+
+group = 'com.haembina.projectreports'
+version = new groovy.json.JsonSlurper().parse(file('package.json')).version
+
+def pluginApiVersion = '14.1.0.5543'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+dependencies {
+    compileOnly("org.sonarsource.api.plugin:sonar-plugin-api:${pluginApiVersion}")
+    compileOnly('com.google.code.findbugs:jsr305:3.0.2')
+    implementation('com.google.code.gson:gson:2.15.0')
+    implementation('io.github.openhtmltopdf:openhtmltopdf-pdfbox:1.1.103')
+    testImplementation("org.sonarsource.api.plugin:sonar-plugin-api:${pluginApiVersion}")
+    testImplementation(platform('org.junit:junit-bom:6.1.3'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation('org.mockito:mockito-core:5.24.0')
+    testImplementation('org.assertj:assertj-core:3.27.7')
+    testImplementation('com.networknt:json-schema-validator:3.0.8')
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+    errorprone('com.google.errorprone:error_prone_core:2.51.0')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:all,-classfile,-processing' << '-Werror'
+    options.deprecation = true
+}
+
+String buildCommit = providers.gradleProperty('commit')
+    .orElse(providers.environmentVariable('GITHUB_SHA'))
+    .getOrElse('unknown')
+
+jar {
+    enabled = false
+}
+
+tasks.shadowJar.configure {
+    archiveClassifier = null
+    relocate('com.google.gson', 'com.haembina.projectreports.shaded.gson')
+    manifest {
+        attributes 'Plugin-Key': 'haembinaprojectreports',
+            'Plugin-Class': 'com.haembina.projectreports.ProjectReportsPlugin',
+            'Plugin-Name': 'Haembina Project Reports',
+            'Plugin-Description': 'Issue, coverage and duplication reports for projects, branches and pull requests',
+            'Plugin-Version': "${project.version}",
+            'Plugin-Organization': 'Haembina',
+            'Plugin-OrganizationUrl': 'https://haembina.com',
+            'Plugin-Homepage': 'https://github.com/Haembina/sonarqube-project-reports',
+            'Plugin-License': 'Proprietary',
+            'Implementation-Commit': buildCommit,
+            'Sonar-Version': pluginApiVersion,
+            'SonarLint-Supported': false
+    }
+}
+
+assemble.dependsOn('shadowJar')
+
+if (gradle.startParameter.taskNames.any { task -> task.tokenize(':').last() == 'pitest' }) {
+    apply(plugin: 'info.solidsoft.pitest')
+    pitest {
+        pitestVersion = '1.30.1'
+        junit5PluginVersion = '1.2.3'
+        timestampedReports = false
+        outputFormats = ['HTML', 'XML']
+        threads = Runtime.runtime.availableProcessors()
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events 'failed'
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                minimum = 1.00
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 1.00
+            }
+        }
+    }
+}
+
+tasks.named('test') { finalizedBy('jacocoTestReport') }
+tasks.named('check') { dependsOn('jacocoTestCoverageVerification') }

@@ -1,0 +1,14 @@
+{
+  "globs": ["**/*.md"],
+  // CHANGELOG.md is written by the release; the rest is not this
+  // repository's to shape.
+  "ignores": ["node_modules", "coverage", "reports", ".stryker-tmp", ".claude", "CHANGELOG.md"],
+  // What git ignores never reaches CI, so a local report must not fail lint:md.
+  "gitignore": true,
+  // The HTML conventions-docs writes into the README and document headers.
+  "config": {
+    "MD013": { "line_length": 80, "tables": false, "code_blocks": false },
+    "MD033": { "allowed_elements": ["b", "br", "code", "details", "div", "img", "sub", "summary", "table", "td", "tr"] },
+    "MD041": { "allow_preamble": true }
+  }
+}

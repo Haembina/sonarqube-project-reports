@@ -1,0 +1,146 @@
+.haembina-reports {
+  box-sizing: border-box;
+  width: min(40rem, 100vw);
+  max-width: 100%;
+  padding: var(--echoes-dimension-space-300);
+  color: var(--echoes-color-text-default);
+  font: var(--echoes-typography-text-default-regular);
+}
+
+.haembina-reports__title {
+  margin: 0 0 var(--echoes-dimension-space-200);
+  font: var(--echoes-typography-heading-xlarge);
+}
+
+.haembina-reports__card {
+  display: grid;
+  gap: var(--echoes-dimension-space-300);
+  padding: var(--echoes-dimension-space-300);
+  border: var(--echoes-border-width-default) solid var(--echoes-color-border-weak);
+  border-radius: var(--echoes-border-radius-400);
+  background: var(--echoes-color-surface-default);
+}
+
+.haembina-reports__label {
+  display: block;
+  margin-bottom: var(--echoes-dimension-space-75);
+  padding: 0;
+  font: var(--echoes-typography-text-default-semi-bold);
+}
+
+.haembina-reports__picker {
+  position: relative;
+}
+
+.haembina-reports__select {
+  width: 100%;
+  min-height: var(--echoes-dimension-height-800);
+  padding: 0 var(--echoes-dimension-height-800) 0 var(--echoes-dimension-space-100);
+  appearance: none;
+  border: var(--echoes-border-width-default) solid var(--echoes-color-border-bold);
+  border-radius: var(--echoes-border-radius-200);
+  background: var(--echoes-color-surface-default);
+  color: var(--echoes-color-text-default);
+  font: inherit;
+}
+
+.haembina-reports__icon {
+  flex: none;
+  width: var(--echoes-dimension-width-200);
+  height: var(--echoes-dimension-width-200);
+}
+
+.haembina-reports__icon--chevron {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: var(--echoes-dimension-height-800);
+  height: 100%;
+  padding: var(--echoes-dimension-space-100);
+  box-sizing: border-box;
+  color: var(--echoes-color-icon-subtle);
+  pointer-events: none;
+}
+
+.haembina-reports__icon--choice {
+  color: var(--echoes-color-icon-subtle);
+}
+
+.haembina-reports__choice-name {
+  font: var(--echoes-typography-text-default-semi-bold);
+}
+
+.haembina-reports__choice-note {
+  color: var(--echoes-color-text-subtle);
+  font: var(--echoes-typography-text-small-regular);
+}
+
+.haembina-reports__fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.haembina-reports__choices {
+  border: var(--echoes-border-width-default) solid var(--echoes-color-border-weak);
+  border-radius: var(--echoes-border-radius-200);
+}
+
+.haembina-reports__choice {
+  display: flex;
+  gap: var(--echoes-dimension-space-100);
+  align-items: center;
+  padding: var(--echoes-dimension-space-100) var(--echoes-dimension-space-150);
+}
+
+.haembina-reports__choice + .haembina-reports__choice {
+  border-top: var(--echoes-border-width-default) solid var(--echoes-color-border-weak);
+}
+
+.haembina-reports__actions {
+  display: flex;
+  gap: var(--echoes-dimension-space-200);
+  align-items: flex-start;
+}
+
+.haembina-reports__status:not(:empty) {
+  padding-top: var(--echoes-dimension-space-75);
+}
+
+.haembina-reports__button {
+  display: inline-flex;
+  gap: var(--echoes-dimension-space-100);
+  align-items: center;
+  min-height: var(--echoes-dimension-height-800);
+  padding: 0 var(--echoes-dimension-space-200);
+  border: 0;
+  border-radius: var(--echoes-border-radius-400);
+  background: var(--echoes-color-background-accent-default);
+  color: var(--echoes-color-text-on-color);
+  font: var(--echoes-typography-text-default-semi-bold);
+  cursor: pointer;
+}
+
+.haembina-reports__button:hover {
+  background: var(--echoes-color-background-accent-hover);
+}
+
+.haembina-reports__button:focus-visible,
+.haembina-reports__select:focus-visible {
+  outline: var(--echoes-focus-border-width-default) solid var(--echoes-color-focus-default);
+  outline-offset: var(--echoes-focus-border-offset-default);
+}
+
+.haembina-reports__button:disabled {
+  background: var(--echoes-color-background-neutral-subtle-default);
+  color: var(--echoes-color-text-disabled);
+  cursor: default;
+}
+
+.haembina-reports__status {
+  margin: 0;
+  color: var(--echoes-color-text-subtle);
+}
+
+.haembina-reports__status--error {
+  color: var(--echoes-color-text-danger);
+}

@@ -1,0 +1,41 @@
+{
+  "name": "haembina-project-reports",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Issue, coverage and duplication reports for SonarQube Community Build projects, branches and pull requests.",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^2.1.1",
+    "@playwright/test": "^1.64.1",
+    "eslint": "^10.13.0",
+    "eslint-plugin-sonarjs": "^4.2.2",
+    "eslint-plugin-yml": "^3.9.0",
+    "globals": "^17.13.0",
+    "markdownlint-cli2": "^0.24.0",
+    "npm-groovy-lint": "^18.0.0",
+    "stylelint": "^17.16.0",
+    "stylelint-config-standard": "^40.0.0"
+  },
+  "scripts": {
+    "lint": "npm run lint:gradle && npm run lint:java",
+    "lint:java": "sh gradlew compileJava compileTestJava",
+    "lint:gradle": "npm-groovy-lint --noserver --failon warning --loglevel warning build.gradle settings.gradle",
+    "lint:md": "markdownlint-cli2",
+    "test": "sh gradlew test && node --test src/test/js/",
+    "test:coverage": "sh gradlew check && npm run test:page",
+    "test:page": "node -e \"require('node:fs').mkdirSync('coverage', { recursive: true })\" && node --test --experimental-test-coverage --test-coverage-include=\"src/main/resources/static/**\" --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info src/test/js/",
+    "build": "sh gradlew assemble",
+    "mutation": "sh gradlew pitest",
+    "gate": "npm run test:coverage && npm run lint && npm run lint:md"
+  },
+  "overrides": {
+    "axios": "^1.21.0",
+    "katex": "^0.19.0",
+    "smol-toml": "^1.9.0"
+  },
+  "allowScripts": {
+    "fsevents": false,
+    "tesseract.js": false
+  }
+}

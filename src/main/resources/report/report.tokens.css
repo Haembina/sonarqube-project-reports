@@ -1,0 +1,25 @@
+:root {
+  --report-ink: #1b2340;
+  --report-muted: #545c7a;
+  --report-line: #ebdfc8;
+  --report-paper: #ffffff;
+  --report-band: #fbf3e6;
+  --report-link: #d40047;
+  --report-mark: #ff0055;
+  --report-pass-ink: #17602f;
+  --report-pass-ground: #e1f3e6;
+  --report-fail-ink: #a3002f;
+  --report-fail-ground: #fde3e9;
+  --report-none-ink: #3c4360;
+  --report-none-ground: #eceef4;
+  --report-rating-a-ink: #17602f;
+  --report-rating-a-ground: #e1f3e6;
+  --report-rating-b-ink: #3a6410;
+  --report-rating-b-ground: #edf5dc;
+  --report-rating-c-ink: #6f5300;
+  --report-rating-c-ground: #fbf0cf;
+  --report-rating-d-ink: #8a3b00;
+  --report-rating-d-ground: #fde6d3;
+  --report-rating-e-ink: #a3002f;
+  --report-rating-e-ground: #fde3e9;
+}

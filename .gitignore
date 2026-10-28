@@ -1,0 +1,11 @@
+node_modules/
+coverage/
+reports/
+.stryker-tmp/
+
+/.gradle/
+/build/
+/.scannerwork/
+
+.claude/settings.local.json
+.superpowers/

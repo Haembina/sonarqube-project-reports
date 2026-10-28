@@ -1,0 +1,6 @@
+{
+  "kinds": ["config", "constants", "helper", "script", "styles", "test", "tokens"],
+  "testKind": "test",
+  "ignore": ["src/main/resources/static/report_page.js", "src/main/resources/static/report_page.css"],
+  "mirrored": ["e2e", "src/test/js"]
+}

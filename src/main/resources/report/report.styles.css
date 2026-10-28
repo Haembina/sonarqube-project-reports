@@ -1,0 +1,250 @@
+@page {
+  size: a4;
+  margin: 16mm 14mm 18mm;
+}
+
+html {
+  background: var(--report-paper);
+}
+
+body {
+  margin: 0;
+  color: var(--report-ink);
+  background: var(--report-paper);
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+.report__link {
+  color: var(--report-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.report {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 2.5rem;
+}
+
+.report__source {
+  margin: 0 0 1.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--report-line);
+  font-size: 10pt;
+  font-weight: 700;
+  text-align: center;
+}
+
+.report__source-icon {
+  width: 18pt;
+  height: 18pt;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+.report__title {
+  margin: 0;
+  font-family: Gabarito, "Nunito Sans", sans-serif;
+  font-size: 22pt;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.report__meta {
+  display: table;
+  width: 100%;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.report__scope {
+  display: table-cell;
+  color: var(--report-muted);
+  font-size: 12pt;
+  vertical-align: middle;
+}
+
+.report__sonar {
+  font-size: 9.5pt;
+}
+
+.report__gate {
+  display: table-cell;
+  font-size: 11pt;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.report-icon {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin-right: 0.35em;
+  background-repeat: no-repeat;
+  background-size: contain;
+  vertical-align: -0.2em;
+}
+
+.report__section {
+  margin: 2rem 0 0.6rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--report-mark);
+  font-family: Gabarito, "Nunito Sans", sans-serif;
+  font-size: 14pt;
+  font-weight: 700;
+  /* stylelint-disable-next-line property-no-deprecated -- Workaround: OpenHTMLtoPDF reads only the page-break names !openhtmltopdf-page-break */
+  page-break-after: avoid;
+}
+
+.report__empty {
+  margin: 0.5rem 0;
+  color: var(--report-muted);
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+}
+
+.report-table thead {
+  /* stylelint-disable-next-line property-no-deprecated -- Workaround: OpenHTMLtoPDF reads only the page-break names !openhtmltopdf-page-break */
+  page-break-after: avoid;
+  display: table-header-group;
+}
+
+.report-table tr {
+  /* stylelint-disable-next-line property-no-deprecated -- Workaround: OpenHTMLtoPDF reads only the page-break names !openhtmltopdf-page-break */
+  page-break-inside: avoid;
+}
+
+.report-table__head {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--report-line);
+  background: var(--report-band);
+  font-weight: 700;
+  text-align: left;
+}
+
+.report-table__cell {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--report-line);
+  vertical-align: top;
+  overflow-wrap: break-word;
+}
+
+.report-table__head--number,
+.report-table__cell--number {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.report-table__cell--label {
+  white-space: nowrap;
+}
+
+.report-table__cell--iconed {
+  padding-left: 1.85rem;
+  background-position: 0.5rem 0.5rem;
+  background-repeat: no-repeat;
+  background-size: 1.05em 1.05em;
+}
+
+.report-table__cell--finding {
+  width: 100%;
+}
+
+.report-table__code {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 8.5pt;
+}
+
+.report-table__where {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--report-muted);
+  overflow-wrap: anywhere;
+}
+
+.report-badge {
+  display: inline-block;
+  padding: 0.05rem 0.45rem;
+  border-radius: 0.25rem;
+  font-weight: 700;
+}
+
+.report-badge--pass {
+  color: var(--report-pass-ink);
+  background: var(--report-pass-ground);
+}
+
+.report-badge--fail {
+  color: var(--report-fail-ink);
+  background: var(--report-fail-ground);
+}
+
+.report-badge--none {
+  color: var(--report-none-ink);
+  background: var(--report-none-ground);
+}
+
+.report-badge--a {
+  color: var(--report-rating-a-ink);
+  background: var(--report-rating-a-ground);
+}
+
+.report-badge--b {
+  color: var(--report-rating-b-ink);
+  background: var(--report-rating-b-ground);
+}
+
+.report-badge--c {
+  color: var(--report-rating-c-ink);
+  background: var(--report-rating-c-ground);
+}
+
+.report-badge--d {
+  color: var(--report-rating-d-ink);
+  background: var(--report-rating-d-ground);
+}
+
+.report-badge--e {
+  color: var(--report-rating-e-ink);
+  background: var(--report-rating-e-ground);
+}
+
+.report__brand {
+  margin-top: 2.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--report-line);
+  text-align: center;
+}
+
+.report__brand-lead {
+  margin-right: 0.45rem;
+  color: var(--report-muted);
+  font-size: 9pt;
+  vertical-align: middle;
+}
+
+.report__brand-link {
+  color: var(--report-mark);
+  text-decoration: none;
+}
+
+.report__brand-mark {
+  width: 16pt;
+  height: 16pt;
+  vertical-align: middle;
+}
+
+.report__brand-name {
+  position: relative;
+  top: 0.09em;
+  margin-left: 0.3rem;
+  font-family: "Android Insomnia", sans-serif;
+  font-size: 12pt;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
