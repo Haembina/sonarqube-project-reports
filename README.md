@@ -4,8 +4,9 @@
 
 # haembina-project-reports
 
-**Issue, coverage and duplication reports for SonarQube Community Build
-projects, branches and pull requests.**
+**One downloadable report per SonarQube Community Build project, branch or pull
+request: the quality gate, measures, issues, hotspots, coverage and
+duplications.**
 
 [What it does](#what-it-does) · [How it works](#how-it-works) ·
 [Setup](#setup-and-use) · [Commands](#commands) · [Layout](#layout) ·

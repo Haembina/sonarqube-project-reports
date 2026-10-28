@@ -56,7 +56,8 @@ tasks.shadowJar.configure {
         attributes 'Plugin-Key': 'haembinaprojectreports',
             'Plugin-Class': 'com.haembina.projectreports.ProjectReportsPlugin',
             'Plugin-Name': 'Haembina Project Reports',
-            'Plugin-Description': 'Issue, coverage and duplication reports for projects, branches and pull requests',
+            'Plugin-Description': 'One downloadable report per project, branch or pull request: ' +
+                'the quality gate, measures, issues, hotspots, coverage and duplications',
             'Plugin-Version': "${project.version}",
             'Plugin-Organization': 'Haembina',
             'Plugin-OrganizationUrl': 'https://haembina.com',
