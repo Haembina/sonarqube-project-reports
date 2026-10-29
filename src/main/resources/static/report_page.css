@@ -103,6 +103,7 @@ div:has(> .haembina-reports) {
 
 .haembina-reports__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--echoes-dimension-space-200);
   align-items: flex-start;
 }
@@ -127,6 +128,20 @@ div:has(> .haembina-reports) {
 
 .haembina-reports__button:hover {
   background: var(--echoes-color-background-accent-hover);
+}
+
+.haembina-reports__button[hidden] {
+  display: none;
+}
+
+.haembina-reports__button--secondary {
+  border: var(--echoes-border-width-default) solid var(--echoes-color-border-bold);
+  background: var(--echoes-color-surface-default);
+  color: var(--echoes-color-text-default);
+}
+
+.haembina-reports__button--secondary:hover {
+  background: var(--echoes-color-background-neutral-subtle-hover);
 }
 
 .haembina-reports__button:focus-visible,

@@ -14,13 +14,16 @@ function element() {
   const listeners = {};
   const classes = new Set();
   const status = { textContent: '', classes, classList: { add: (name) => classes.add(name), remove: (name) => classes.delete(name) } };
-  const button = { disabled: false };
+  const button = { disabled: false, innerHTML: '' };
+  const each = { disabled: false, hidden: true };
   const anchor = { click: mock.fn() };
+  const named = { '[value="together"]': button, '[value="each"]': each };
   return {
     innerHTML: '',
     listeners,
     status,
     button,
+    each,
     anchor,
     addEventListener: (type, listener) => { listeners[type] = listener; },
     removeEventListener: (type, listener) => {
@@ -28,7 +31,8 @@ function element() {
         delete listeners[type];
       }
     },
-    querySelector: (selector) => (selector.endsWith('__status') ? status : button),
+    querySelector: (selector) => (selector.endsWith('__status') ? status : named[selector]),
+    querySelectorAll: () => [button, each],
     ownerDocument: { createElement: () => anchor },
   };
 }
@@ -70,11 +74,20 @@ async function open(branchLike, routes = {}) {
 }
 
 const ALL_SECTIONS = ['gate', 'measures', 'issues', 'hotspots', 'files', 'coverage', 'duplications'];
+const ALL_FORMATS = ['json', 'markdown', 'html', 'pdf', 'epub', 'csv', 'sarif'];
 
-function submit(el, scope, format = 'json', chosen = ALL_SECTIONS) {
-  const sections = ALL_SECTIONS.map((value) => ({ value, checked: chosen.includes(value) }));
-  const elements = { scope: { value: scope }, format: { value: format }, sections };
-  return el.listeners.submit({ preventDefault: mock.fn(), target: { elements } });
+function boxes(all, chosen) {
+  return all.map((value) => ({ value, checked: chosen.includes(value) }));
+}
+
+function submit(el, scope, formats = ['json'], chosen = ALL_SECTIONS, as = undefined) {
+  const elements = { scope: { value: scope }, formats: boxes(ALL_FORMATS, formats), sections: boxes(ALL_SECTIONS, chosen) };
+  const submitter = as === undefined ? null : { value: as };
+  return el.listeners.submit({ preventDefault: mock.fn(), target: { elements }, submitter });
+}
+
+function tick(el, formats, name = 'formats') {
+  el.listeners.change({ target: { name, form: { elements: { formats: boxes(ALL_FORMATS, formats) } } } });
 }
 
 describe('the Reports page', () => {
@@ -97,9 +110,87 @@ describe('the Reports page', () => {
     assert.match(html, /<option value="branch:feature\/&#60;x&#62;">feature\/&#60;x&#62;<\/option>/u);
     assert.match(html, /<option value="pullRequest:7">page\.pull_request\{"0":"7","1":"Add reports"\}/u);
     assert.match(html, /page\.pull_request\{"0":"8","1":"fix"\}/u);
-    assert.equal(el.innerHTML.match(/type="radio"/gu).length, 7);
+    assert.equal(el.innerHTML.match(/type="checkbox" name="formats"/gu).length, 7);
     assert.equal(el.innerHTML.match(/type="checkbox" name="sections" value="[a-z]+" checked/gu).length, 7);
-    assert.match(el.innerHTML, /value="json" checked/u);
+    assert.match(el.innerHTML, /name="formats" value="json" checked/u);
+    assert.match(el.innerHTML, /value="together"[^>]*>.*page\.download\{\}<\/button>/u);
+    assert.match(el.innerHTML, /value="each"[^>]*hidden>.*page\.download_each\{\}<\/button>/u);
+  });
+
+  test('offers a zip and separate files once two or more formats are ticked', async () => {
+    const { el } = await open(undefined);
+
+    tick(el, ['json', 'pdf']);
+    assert.match(el.button.innerHTML, /icon--button.*page\.download_zip\{\}/u);
+    assert.equal(el.each.hidden, false);
+
+    tick(el, ['pdf']);
+    assert.match(el.button.innerHTML, /page\.download\{\}/u);
+    assert.equal(el.each.hidden, true);
+
+    tick(el, ['json', 'pdf'], 'sections');
+    assert.match(el.button.innerHTML, /page\.download\{\}/u);
+  });
+
+  test('asks for every ticked format in one zip', async () => {
+    const { el } = await open(undefined, {
+      '/api/project_reports/download': answer('bytes', {
+        headers: { 'Content-Disposition': 'attachment; filename="acme-main-reports.zip"' },
+      }),
+    });
+
+    await submit(el, 'main', ['json', 'pdf'], ['gate'], 'together');
+
+    assert.equal(globalThis.fetch.mock.calls.at(-1).arguments[0],
+      '/api/project_reports/download?project=acme&format=json%2Cpdf&sections=gate');
+    assert.equal(el.anchor.download, 'acme-main-reports.zip');
+    assert.equal(el.anchor.click.mock.callCount(), 1);
+  });
+
+  test('downloads each ticked format as its own file, counting them', async () => {
+    const statuses = [];
+    const { el } = await open(undefined, {
+      '/api/project_reports/download': (url) => {
+        statuses.push(el.status.textContent);
+        const format = new URL(url, 'https://sonar.test').searchParams.get('format');
+        return answer('bytes', { headers: { 'Content-Disposition': `attachment; filename="acme-main-report.${format}"` } });
+      },
+    });
+
+    await submit(el, 'main', ['json', 'csv', 'sarif'], ['gate'], 'each');
+
+    const asked = globalThis.fetch.mock.calls.slice(-3).map((call) => call.arguments[0]);
+    assert.deepEqual(asked, ['json', 'csv', 'sarif'].map((format) =>
+      `/api/project_reports/download?project=acme&format=${format}&sections=gate`));
+    assert.deepEqual(statuses, [1, 2, 3].map((index) => `page.downloading_each${JSON.stringify({ 0: index, 1: 3 })}`));
+    assert.equal(el.anchor.click.mock.callCount(), 3);
+    assert.equal(el.anchor.download, 'acme-main-report.sarif');
+    assert.equal(el.status.textContent, '');
+    assert.equal(el.each.disabled, false);
+  });
+
+  test('stops at the first separate file that fails', async () => {
+    const { el } = await open(undefined, {
+      '/api/project_reports/download': answer({ errors: [{ msg: 'gone' }] }, { ok: false }),
+    });
+    const calls = globalThis.fetch.mock.callCount();
+
+    await submit(el, 'main', ['json', 'pdf'], ['gate'], 'each');
+
+    assert.equal(globalThis.fetch.mock.callCount(), calls + 1);
+    assert.equal(el.status.textContent, `page.failed${JSON.stringify({ 0: 'gone' })}`);
+    assert.equal(el.anchor.click.mock.callCount(), 0);
+  });
+
+  test('asks for a format before downloading when none is ticked', async () => {
+    const { el } = await open(undefined, { '/api/project_reports/download': answer('bytes') });
+    const calls = globalThis.fetch.mock.callCount();
+
+    await submit(el, 'main', []);
+
+    assert.equal(globalThis.fetch.mock.callCount(), calls);
+    assert.equal(el.status.textContent, 'page.no_formats{}');
+    assert.ok(el.status.classes.has('haembina-reports__status--error'));
   });
 
   test('selects the branch or pull request open in SonarQube', async () => {
@@ -129,7 +220,7 @@ describe('the Reports page', () => {
       }),
     });
 
-    await submit(el, 'pullRequest:7', 'sarif');
+    await submit(el, 'pullRequest:7', ['sarif']);
 
     const url = globalThis.fetch.mock.calls.at(-1).arguments[0];
     assert.equal(url, '/api/project_reports/download?project=acme&format=sarif&sections=gate%2Cmeasures%2Cissues%2Chotspots%2Cfiles%2Ccoverage%2Cduplications&pullRequest=7');
@@ -143,7 +234,7 @@ describe('the Reports page', () => {
   test('asks for the main branch without a branch and names a file without a header', async () => {
     const { el } = await open(undefined, { '/api/project_reports/download': answer('bytes') });
 
-    await submit(el, 'main', 'html', ['coverage', 'duplications']);
+    await submit(el, 'main', ['html'], ['coverage', 'duplications']);
 
     assert.equal(globalThis.fetch.mock.calls.at(-1).arguments[0],
       '/api/project_reports/download?project=acme&format=html&sections=coverage%2Cduplications');
@@ -154,7 +245,7 @@ describe('the Reports page', () => {
     const { el } = await open(undefined, { '/api/project_reports/download': answer('bytes') });
     const calls = globalThis.fetch.mock.callCount();
 
-    await submit(el, 'main', 'pdf', []);
+    await submit(el, 'main', ['pdf'], []);
 
     assert.equal(globalThis.fetch.mock.callCount(), calls);
     assert.equal(el.status.textContent, 'page.no_sections{}');
@@ -184,6 +275,7 @@ describe('the Reports page', () => {
     stop();
 
     assert.equal(el.listeners.submit, undefined);
+    assert.equal(el.listeners.change, undefined);
     assert.equal(el.innerHTML, '');
   });
 });

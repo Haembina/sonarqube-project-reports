@@ -11,12 +11,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sonar.api.platform.Server;
@@ -37,7 +42,7 @@ class DownloadActionTest {
     @BeforeEach
     void setUp() {
         when(request.mandatoryParam("project")).thenReturn("acme");
-        when(request.mandatoryParam("format")).thenReturn("json");
+        when(request.mandatoryParamAsStrings("format")).thenReturn(List.of("json"));
         when(request.localConnector()).thenReturn(connector);
         when(server.getPublicRootUrl()).thenReturn("https://sonar.test");
         when(response.stream()).thenReturn(stream);
@@ -66,6 +71,38 @@ class DownloadActionTest {
         verify(stream).setStatus(200);
         verify(stream).setMediaType("application/json");
         assertThat(written.toString(StandardCharsets.UTF_8)).contains("\"branch\": \"feature/x\"", "\"status\": \"OK\"");
+    }
+
+    @Test
+    void zipsAReportInEachFormatAskedFromOneCollection() throws IOException {
+        when(request.mandatoryParamAsStrings("format")).thenReturn(List.of("markdown", "json"));
+        when(request.paramAsStrings("sections")).thenReturn(List.of("gate"));
+        LocalConnector.LocalResponse gate = answer(200, "{\"projectStatus\":{\"status\":\"OK\"}}");
+        when(connector.call(any())).thenReturn(gate);
+
+        action.handle(request, response);
+
+        verify(connector, times(4)).call(any());
+        verify(response).setHeader("Content-Disposition", "attachment; filename=\"acme-main-reports.zip\"");
+        verify(stream).setMediaType("application/zip");
+        Map<String, String> files = new LinkedHashMap<>();
+        try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(written.toByteArray()))) {
+            for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                files.put(entry.getName(), new String(zip.readAllBytes(), StandardCharsets.UTF_8));
+            }
+        }
+        assertThat(files).containsOnlyKeys("acme-main-report.json", "acme-main-report.md");
+        assertThat(files.get("acme-main-report.json")).contains("\"status\": \"OK\"");
+        assertThat(files.get("acme-main-report.md")).contains("\n# acme\n");
+    }
+
+    @Test
+    void refusesAnEmptyFormatList() {
+        when(request.mandatoryParamAsStrings("format")).thenReturn(List.of());
+
+        assertThatThrownBy(() -> action.handle(request, response))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Set at least one format");
     }
 
     @Test

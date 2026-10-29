@@ -2,6 +2,9 @@ package com.haembina.projectreports.report;
 
 import java.time.Clock;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 public enum ReportFormat {
     JSON("json", "json", "application/json"),
@@ -27,6 +30,12 @@ public enum ReportFormat {
             .filter(format -> format.key.equals(key))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Unknown report format: " + key));
+    }
+
+    public static Set<ReportFormat> fromKeys(Collection<String> keys) {
+        Set<ReportFormat> formats = EnumSet.noneOf(ReportFormat.class);
+        keys.forEach(key -> formats.add(fromKey(key)));
+        return formats;
     }
 
     public String key() {
