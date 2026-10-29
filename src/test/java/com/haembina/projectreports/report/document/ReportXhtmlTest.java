@@ -41,8 +41,11 @@ class ReportXhtmlTest {
     void opensWithThePluginIconAndLinkAboveTheScopeAndGate() {
         String html = ReportXhtml.document(full(), EMBEDDING);
 
-        assertThat(html).startsWith("<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" "
-                + "xml:lang=\"en\" dir=\"ltr\">\n<head>\n")
+        assertThat(html).startsWith("""
+                <!DOCTYPE html>
+                <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" dir="ltr">
+                <head>
+                """)
             .contains("<title>acme &lt;app&gt; – Pull request 7</title>")
             .contains("<style>\n@font-face { font-family: \"Test\"; }\n")
             .contains("<p class=\"report__source\"><a class=\"report__link\" "
