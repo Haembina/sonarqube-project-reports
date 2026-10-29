@@ -1,5 +1,6 @@
 package com.haembina.projectreports.report;
 
+import com.haembina.projectreports.l10n.Message;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -37,7 +38,7 @@ public enum ReportSection {
             sections.add(Arrays.stream(values())
                 .filter(section -> section.key.equals(key))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown report section: " + key)));
+                .orElseThrow(() -> new IllegalArgumentException(Message.API_UNKNOWN_SECTION.text(key))));
         }
         return sections;
     }

@@ -1,10 +1,11 @@
 package com.haembina.projectreports.report;
 
+import com.haembina.projectreports.l10n.Message;
 import com.haembina.projectreports.report.document.ReportAssets;
-import com.haembina.projectreports.report.document.ReportXhtml;
 import com.haembina.projectreports.report.view.ReportIcons;
 import com.haembina.projectreports.report.view.ReportView;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -24,12 +25,14 @@ final class MarkdownReportRenderer implements ReportRenderer {
             .append("# ").append(cell(view.project())).append("\n\n")
             .append(scopeLine(view));
         if (view.has(ReportSection.GATE)) {
-            text.append(" · Quality gate: **").append(status(view.gate().label(), view.gate().tone())).append("**");
+            text.append(" · ").append(cell(Message.REPORT_GATE.text())).append(": **")
+                .append(status(view.gate().label(), view.gate().tone())).append("**");
         }
         text.append('\n');
         findings(text, view);
         details(text, view);
-        text.append("\n---\n\n<p align=\"center\">Developed by <a href=\"").append(ReportView.BRAND_URL).append("\">")
+        text.append("\n---\n\n<p align=\"center\">").append(cell(Message.REPORT_DEVELOPED_BY.text()))
+            .append(" <a href=\"").append(ReportView.BRAND_URL).append("\">")
             .append(image(ReportView.MARK_URL, MARK_SIZE)).append(" <b>").append(ReportView.BRAND_NAME)
             .append("</b></a></p>\n");
         return text.toString().getBytes(StandardCharsets.UTF_8);
@@ -39,7 +42,7 @@ final class MarkdownReportRenderer implements ReportRenderer {
         Report.Links links = view.links();
         String repository = links.repository() == null ? "" : link(links.repositoryUrl(), links.repository()) + " · ";
         String sonar = links.sonarUrl() == null ? ""
-            : " · " + link(links.sonarUrl(), ReportXhtml.OPEN_IN_SONARQUBE);
+            : " · " + link(links.sonarUrl(), Message.REPORT_OPEN_IN_SONARQUBE.text());
         return repository + link(links.scopeUrl(), view.scope()) + sonar;
     }
 
@@ -50,25 +53,29 @@ final class MarkdownReportRenderer implements ReportRenderer {
 
     private static void findings(StringBuilder text, ReportView view) {
         if (view.has(ReportSection.GATE)) {
-            section(text, heading(ReportIcons.GATE, "Quality gate conditions"), "No conditions apply to this scope.",
-                List.of("Condition", "Required", "Actual", "Status"), "| --- | --- | ---: | --- |", view.conditions(),
+            section(text, heading(ReportIcons.GATE, Message.HEADING_CONDITIONS.text()),
+                Message.EMPTY_CONDITIONS.text(), heads(Message.COLUMN_CONDITION, Message.COLUMN_REQUIRED,
+                    Message.COLUMN_ACTUAL, Message.COLUMN_STATUS), "| --- | --- | ---: | --- |", view.conditions(),
                 condition -> List.of(condition.metric(), condition.expected(), condition.actual(),
                     status(condition.status(), condition.tone())));
         }
         if (view.has(ReportSection.MEASURES)) {
-            section(text, heading(ReportIcons.MEASURES, "Measures"), "The server holds no measures for this scope.",
-                List.of("Metric", "Overall", "New code"), "| --- | ---: | ---: |", view.measures(),
-                measure -> List.of(measure.label(), measure.overall(), measure.newCode()));
+            section(text, heading(ReportIcons.MEASURES, Message.HEADING_MEASURES.text()),
+                Message.EMPTY_MEASURES.text(),
+                heads(Message.COLUMN_METRIC, Message.COLUMN_OVERALL, Message.COLUMN_NEW_CODE), "| --- | ---: | ---: |",
+                view.measures(), measure -> List.of(measure.label(), measure.overall(), measure.newCode()));
         }
         if (view.has(ReportSection.ISSUES)) {
-            section(text, heading(ReportIcons.ISSUES, "Issues (" + view.issues().size() + ")"), "No open issues.",
-                List.of("Severity", "Type", "Rule", "Location", "Message"), "| --- | --- | --- | --- | --- |",
+            section(text, heading(ReportIcons.ISSUES, Message.HEADING_ISSUES.text(view.issues().size())),
+                Message.EMPTY_ISSUES.text(), heads(Message.COLUMN_SEVERITY, Message.COLUMN_TYPE, Message.COLUMN_RULE,
+                    Message.COLUMN_LOCATION, Message.COLUMN_MESSAGE), "| --- | --- | --- | --- | --- |",
                 view.issues(), issue -> List.of(issue.severity(), issue.type(), code(issue.rule()),
                     code(issue.location()), issue.message()));
         }
         if (view.has(ReportSection.HOTSPOTS)) {
-            section(text, heading(ReportIcons.HOTSPOTS, "Security hotspots (" + view.hotspots().size() + ")"),
-                "No security hotspots.", List.of("Probability", "Category", "Rule", "Location", "Message", "Status"),
+            section(text, heading(ReportIcons.HOTSPOTS, Message.HEADING_HOTSPOTS.text(view.hotspots().size())),
+                Message.EMPTY_HOTSPOTS.text(), heads(Message.COLUMN_PROBABILITY, Message.COLUMN_CATEGORY,
+                    Message.COLUMN_RULE, Message.COLUMN_LOCATION, Message.COLUMN_MESSAGE, Message.COLUMN_STATUS),
                 "| --- | --- | --- | --- | --- | --- |", view.hotspots(),
                 hotspot -> List.of(hotspot.probability(), hotspot.category(), code(hotspot.rule()),
                     code(hotspot.location()), hotspot.message(), hotspot.status()));
@@ -77,25 +84,32 @@ final class MarkdownReportRenderer implements ReportRenderer {
 
     private static void details(StringBuilder text, ReportView view) {
         if (view.has(ReportSection.FILES)) {
-            section(text, heading(ReportIcons.FILES, "Files (" + view.files().size() + ")"), "No files.",
-                List.of("File", "Lines of code", "Coverage", "Uncovered lines", "Duplicated lines (%)", "Open issues"),
+            section(text, heading(ReportIcons.FILES, Message.HEADING_FILES.text(view.files().size())),
+                Message.EMPTY_FILES.text(), heads(Message.COLUMN_FILE, Message.METRIC_NCLOC, Message.METRIC_COVERAGE,
+                    Message.COLUMN_UNCOVERED_LINES, Message.METRIC_DUPLICATED_LINES_DENSITY,
+                    Message.COLUMN_OPEN_ISSUES),
                 "| --- | ---: | ---: | ---: | ---: | ---: |", view.files(),
                 file -> List.of(code(file.path()), file.lines(), file.coverage(), file.uncovered(), file.duplicated(),
                     file.issues()));
         }
         if (view.has(ReportSection.COVERAGE)) {
-            section(text, heading(ReportIcons.COVERAGE_LINES, "Uncovered lines (" + view.coverage().size() + ")"),
-                view.sourceHidden() ? ReportXhtml.SOURCE_HIDDEN : "Every line is covered.",
-                List.of("File", "Uncovered lines", "Partly covered"), "| --- | --- | --- |", view.coverage(),
+            section(text, heading(ReportIcons.COVERAGE_LINES, Message.HEADING_COVERAGE.text(view.coverage().size())),
+                view.sourceHidden() ? Message.REPORT_SOURCE_HIDDEN.text() : Message.EMPTY_COVERAGE.text(),
+                heads(Message.COLUMN_FILE, Message.COLUMN_UNCOVERED_LINES, Message.COLUMN_PARTLY_COVERED),
+                "| --- | --- | --- |", view.coverage(),
                 lines -> List.of(code(lines.path()), lines.uncovered(), lines.partial()));
         }
         if (view.has(ReportSection.DUPLICATIONS)) {
-            String duplicated = "Duplicated blocks (" + view.duplications().size() + ")";
+            String duplicated = Message.HEADING_DUPLICATIONS.text(view.duplications().size());
             section(text, heading(ReportIcons.DUPLICATED_BLOCKS, duplicated),
-                view.sourceHidden() ? ReportXhtml.SOURCE_HIDDEN : "No duplicated blocks.",
-                List.of("File", "Lines", "Also in"), "| --- | --- | --- |", view.duplications(),
-                block -> List.of(code(block.path()), block.lines(), block.copies()));
+                view.sourceHidden() ? Message.REPORT_SOURCE_HIDDEN.text() : Message.EMPTY_DUPLICATIONS.text(),
+                heads(Message.COLUMN_FILE, Message.COLUMN_LINES, Message.COLUMN_ALSO_IN), "| --- | --- | --- |",
+                view.duplications(), block -> List.of(code(block.path()), block.lines(), block.copies()));
         }
+    }
+
+    private static List<String> heads(Message... columns) {
+        return Arrays.stream(columns).map(Message::text).toList();
     }
 
     private static String image(String source, int size) {

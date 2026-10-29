@@ -2,6 +2,7 @@ package com.haembina.projectreports.report.document;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.haembina.projectreports.l10n.Message;
 import com.haembina.projectreports.report.Report;
 import com.haembina.projectreports.report.ReportSection;
 import com.haembina.projectreports.report.view.ReportView;
@@ -40,7 +41,8 @@ class ReportXhtmlTest {
     void opensWithThePluginIconAndLinkAboveTheScopeAndGate() {
         String html = ReportXhtml.document(full(), EMBEDDING);
 
-        assertThat(html).startsWith("<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\"")
+        assertThat(html).startsWith("<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" "
+                + "xml:lang=\"en\" dir=\"ltr\">\n<head>\n")
             .contains("<title>acme &lt;app&gt; – Pull request 7</title>")
             .contains("<style>\n@font-face { font-family: \"Test\"; }\n")
             .contains("<p class=\"report__source\"><a class=\"report__link\" "
@@ -158,7 +160,9 @@ class ReportXhtmlTest {
             List.of(), List.of(), List.of(), List.of(), EnumSet.of(ReportSection.COVERAGE, ReportSection.DUPLICATIONS),
             List.of(), List.of(), false);
 
-        assertThat(ReportXhtml.document(hidden, EMBEDDING).split(ReportXhtml.SOURCE_HIDDEN, -1)).hasSize(3);
+        assertThat(ReportXhtml.document(hidden, EMBEDDING).split(Message.REPORT_SOURCE_HIDDEN.text(), -1)).hasSize(3);
+        assertThat(Message.REPORT_SOURCE_HIDDEN.text())
+            .isEqualTo("These lines are not listed: your account lacks See Source Code permission on this project.");
         assertThat(ReportXhtml.document(clean, EMBEDDING))
             .contains("<p class=\"report__empty\">Every line is covered.</p>")
             .contains("<p class=\"report__empty\">No duplicated blocks.</p>");

@@ -1,5 +1,7 @@
 package com.haembina.projectreports.report.document;
 
+import com.haembina.projectreports.l10n.Language;
+import com.haembina.projectreports.l10n.Message;
 import com.haembina.projectreports.report.Report;
 import com.haembina.projectreports.report.ReportSection;
 import com.haembina.projectreports.report.view.ReportIcons;
@@ -24,17 +26,20 @@ public final class ReportXhtml {
     private static final String NUMBER = "number";
     private static final String RATINGS = "ABCDE";
     private static final String SEPARATOR = " · ";
-    public static final String OPEN_IN_SONARQUBE = "Open in SonarQube";
-    public static final String SOURCE_HIDDEN = "These lines are not listed: your account lacks See Source Code "
-        + "permission on this project.";
     private static final List<String> STATUS_TONES = List.of("pass", "fail", "none");
 
     private ReportXhtml() {
     }
 
+    public static String language() {
+        Language language = Language.DEFAULT;
+        return "lang=\"" + language.code() + "\" xml:lang=\"" + language.code() + "\" dir=\"" + language.direction()
+            + "\"";
+    }
+
     public static String document(ReportView view, Embedding embedding) {
         StringBuilder html = new StringBuilder(
-            "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\n<head>\n")
+            "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" " + language() + ">\n<head>\n")
             .append("<meta charset=\"utf-8\" />\n")
             .append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n")
             .append("<title>").append(escape(view.project() + " – " + view.scope())).append("</title>\n")
@@ -48,13 +53,14 @@ public final class ReportXhtml {
             .append("<div class=\"report__meta\"><p class=\"report__scope\">").append(scopeLine(view))
             .append("</p>");
         if (view.has(ReportSection.GATE)) {
-            html.append("<p class=\"report__gate\">Quality gate ")
+            html.append("<p class=\"report__gate\">").append(escape(Message.REPORT_GATE.text())).append(' ')
                 .append(badge(view.gate().label(), view.gate().tone())).append("</p>");
         }
         html.append("</div>\n");
         findings(html, view);
         details(html, view);
-        return html.append("<footer class=\"report__brand\"><span class=\"report__brand-lead\">Developed by</span>")
+        return html.append("<footer class=\"report__brand\"><span class=\"report__brand-lead\">")
+            .append(escape(Message.REPORT_DEVELOPED_BY.text())).append(SPAN_END)
             .append("<a class=\"report__brand-link\" href=\"").append(ReportView.BRAND_URL)
             .append("\"><img class=\"report__brand-mark\" src=\"").append(embedding.imageSource(ReportAssets.MARK))
             .append("\" alt=\"\" /><span class=\"report__brand-name\">")
@@ -68,7 +74,7 @@ public final class ReportXhtml {
             : link(links.repositoryUrl(), links.repository()) + SEPARATOR;
         String sonar = links.sonarUrl() == null ? ""
             : SEPARATOR + "<a class=\"report__link report__sonar\" href=\"" + escape(links.sonarUrl()) + "\">"
-                + OPEN_IN_SONARQUBE + "</a>";
+                + escape(Message.REPORT_OPEN_IN_SONARQUBE.text()) + "</a>";
         return repository + link(links.scopeUrl(), view.scope()) + sonar;
     }
 
@@ -79,27 +85,32 @@ public final class ReportXhtml {
 
     private static void findings(StringBuilder html, ReportView view) {
         if (view.has(ReportSection.GATE)) {
-            section(html, ReportIcons.GATE, "Quality gate conditions", "No conditions apply to this scope.",
-                List.of(head("Condition"), head("Required"), head("Actual"), head("Status")), view.conditions(),
+            section(html, ReportIcons.GATE, Message.HEADING_CONDITIONS.text(), Message.EMPTY_CONDITIONS.text(),
+                List.of(head(Message.COLUMN_CONDITION), head(Message.COLUMN_REQUIRED), head(Message.COLUMN_ACTUAL),
+                    head(Message.COLUMN_STATUS)), view.conditions(),
                 condition -> List.of(cell(condition.metric()), cell(condition.expected()), cell(condition.actual()),
                     CELL + badge(condition.status(), condition.tone()) + CELL_END));
         }
         if (view.has(ReportSection.MEASURES)) {
-            section(html, ReportIcons.MEASURES, "Measures", "The server holds no measures for this scope.",
-                List.of(head("Metric"), number("Overall"), number("New code")), view.measures(),
+            section(html, ReportIcons.MEASURES, Message.HEADING_MEASURES.text(), Message.EMPTY_MEASURES.text(),
+                List.of(head(Message.COLUMN_METRIC), number(Message.COLUMN_OVERALL), number(Message.COLUMN_NEW_CODE)),
+                view.measures(),
                 measure -> List.of(label(measure.label(), measure.icon()), value(measure.overall(), measure.rating()),
                     value(measure.newCode(), measure.rating())));
         }
         if (view.has(ReportSection.ISSUES)) {
-            section(html, ReportIcons.ISSUES, "Issues (" + view.issues().size() + ")", "No open issues.",
-                List.of(head("Severity"), head("Type"), head("Issue")), view.issues(),
+            section(html, ReportIcons.ISSUES, Message.HEADING_ISSUES.text(view.issues().size()),
+                Message.EMPTY_ISSUES.text(),
+                List.of(head(Message.COLUMN_SEVERITY), head(Message.COLUMN_TYPE), head(Message.COLUMN_ISSUE)),
+                view.issues(),
                 issue -> List.of(label(issue.severity(), issue.severityIcon()), label(issue.type(), issue.typeIcon()),
                     finding(issue.message(), issue.rule(), issue.location())));
         }
         if (view.has(ReportSection.HOTSPOTS)) {
-            section(html, ReportIcons.HOTSPOTS, "Security hotspots (" + view.hotspots().size() + ")",
-                "No security hotspots.",
-                List.of(head("Probability"), head("Category"), head("Status"), head("Hotspot")), view.hotspots(),
+            section(html, ReportIcons.HOTSPOTS, Message.HEADING_HOTSPOTS.text(view.hotspots().size()),
+                Message.EMPTY_HOTSPOTS.text(),
+                List.of(head(Message.COLUMN_PROBABILITY), head(Message.COLUMN_CATEGORY), head(Message.COLUMN_STATUS),
+                    head(Message.COLUMN_HOTSPOT)), view.hotspots(),
                 hotspot -> List.of(label(hotspot.probability(), ""), label(hotspot.category(), ""),
                     label(hotspot.status(), ""), finding(hotspot.message(), hotspot.rule(), hotspot.location())));
         }
@@ -107,22 +118,26 @@ public final class ReportXhtml {
 
     private static void details(StringBuilder html, ReportView view) {
         if (view.has(ReportSection.FILES)) {
-            section(html, ReportIcons.FILES, "Files (" + view.files().size() + ")", "No files.",
-                List.of(head("File"), number("Lines of code"), number("Coverage"), number("Uncovered lines"),
-                    number("Duplicated lines (%)"), number("Open issues")), view.files(),
+            section(html, ReportIcons.FILES, Message.HEADING_FILES.text(view.files().size()),
+                Message.EMPTY_FILES.text(),
+                List.of(head(Message.COLUMN_FILE), number(Message.METRIC_NCLOC), number(Message.METRIC_COVERAGE),
+                    number(Message.COLUMN_UNCOVERED_LINES), number(Message.METRIC_DUPLICATED_LINES_DENSITY),
+                    number(Message.COLUMN_OPEN_ISSUES)), view.files(),
                 file -> List.of(code(file.path()), numeric(file.lines()), numeric(file.coverage()),
                     numeric(file.uncovered()), numeric(file.duplicated()), numeric(file.issues())));
         }
         if (view.has(ReportSection.COVERAGE)) {
-            section(html, ReportIcons.COVERAGE_LINES, "Uncovered lines (" + view.coverage().size() + ")",
-                view.sourceHidden() ? SOURCE_HIDDEN : "Every line is covered.",
-                List.of(head("File"), head("Uncovered lines"), head("Partly covered")), view.coverage(),
+            section(html, ReportIcons.COVERAGE_LINES, Message.HEADING_COVERAGE.text(view.coverage().size()),
+                view.sourceHidden() ? Message.REPORT_SOURCE_HIDDEN.text() : Message.EMPTY_COVERAGE.text(),
+                List.of(head(Message.COLUMN_FILE), head(Message.COLUMN_UNCOVERED_LINES),
+                    head(Message.COLUMN_PARTLY_COVERED)), view.coverage(),
                 lines -> List.of(code(lines.path()), cell(lines.uncovered()), cell(lines.partial())));
         }
         if (view.has(ReportSection.DUPLICATIONS)) {
-            section(html, ReportIcons.DUPLICATED_BLOCKS, "Duplicated blocks (" + view.duplications().size() + ")",
-                view.sourceHidden() ? SOURCE_HIDDEN : "No duplicated blocks.",
-                List.of(head("File"), head("Lines"), head("Also in")), view.duplications(),
+            section(html, ReportIcons.DUPLICATED_BLOCKS, Message.HEADING_DUPLICATIONS.text(view.duplications().size()),
+                view.sourceHidden() ? Message.REPORT_SOURCE_HIDDEN.text() : Message.EMPTY_DUPLICATIONS.text(),
+                List.of(head(Message.COLUMN_FILE), head(Message.COLUMN_LINES), head(Message.COLUMN_ALSO_IN)),
+                view.duplications(),
                 block -> List.of(code(block.path()), cell(block.lines()), cell(block.copies())));
         }
     }
@@ -155,12 +170,12 @@ public final class ReportXhtml {
         html.append("</tbody>\n</table>\n");
     }
 
-    private static String head(String text) {
-        return "<th class=\"report-table__head\">" + escape(text) + "</th>";
+    private static String head(Message text) {
+        return "<th class=\"report-table__head\">" + escape(text.text()) + "</th>";
     }
 
-    private static String number(String text) {
-        return "<th class=\"report-table__head report-table__head--" + NUMBER + "\">" + escape(text) + "</th>";
+    private static String number(Message text) {
+        return "<th class=\"report-table__head report-table__head--" + NUMBER + "\">" + escape(text.text()) + "</th>";
     }
 
     private static String cell(String text) {

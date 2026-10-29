@@ -1,7 +1,12 @@
 package com.haembina.projectreports.ws;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.haembina.projectreports.api.ApiCallException;
 import com.haembina.projectreports.api.LocalApi;
+import com.haembina.projectreports.l10n.Message;
 import com.haembina.projectreports.report.Report;
 import com.haembina.projectreports.report.ReportCollector;
 import com.haembina.projectreports.report.ReportFormat;
@@ -37,14 +42,22 @@ final class DownloadAction implements RequestHandler {
     private static final String ERROR_MEDIA_TYPE = "application/json";
     private static final int BAD_REQUEST = 400;
     private static final int NOT_FOUND = 404;
-    private static final byte[] NO_BRANCH_PLUGIN = ("{\"errors\":[{\"msg\":\"Reports of a branch or pull request need "
-        + "the haembina-branch-analysis plugin, which this SonarQube does not have\"}]}")
-        .getBytes(StandardCharsets.UTF_8);
+    private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
+
+    private static byte[] errorBody(String message) {
+        JsonObject error = new JsonObject();
+        error.addProperty("msg", message);
+        JsonArray errors = new JsonArray();
+        errors.add(error);
+        JsonObject body = new JsonObject();
+        body.add("errors", errors);
+        return GSON.toJson(body).getBytes(StandardCharsets.UTF_8);
+    }
 
     @Override
     public void handle(Request request, Response response) {
         if (request.hasParam(BRANCH) && request.hasParam(PULL_REQUEST)) {
-            throw new IllegalArgumentException("Set either branch or pullRequest, not both");
+            throw new IllegalArgumentException(Message.API_BRANCH_AND_PULL_REQUEST.text());
         }
         ReportTarget target = new ReportTarget(
             request.mandatoryParam(PROJECT), request.param(BRANCH), request.param(PULL_REQUEST));
@@ -57,7 +70,7 @@ final class DownloadAction implements RequestHandler {
             report = new ReportCollector(api, server.getPublicRootUrl()).collect(target, sections);
         } catch (ApiCallException failure) {
             if (failure.status() == NOT_FOUND && !target.isMainBranch() && !branchesSupported(api, target)) {
-                write(response, BAD_REQUEST, ERROR_MEDIA_TYPE, NO_BRANCH_PLUGIN, null);
+                write(response, BAD_REQUEST, ERROR_MEDIA_TYPE, errorBody(Message.API_NO_BRANCH_PLUGIN.text()), null);
             } else {
                 write(response, failure.status(), ERROR_MEDIA_TYPE, failure.body(), null);
             }

@@ -2,7 +2,6 @@ package com.haembina.projectreports.report;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.haembina.projectreports.report.document.ReportXhtml;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.List;
@@ -103,7 +102,9 @@ class MarkdownReportRendererTest {
         Report clean = new Report(new ReportTarget("acme", null, null), details, new Report.QualityGate("OK", List.of()),
             List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), false);
 
-        assertThat(render(SampleReport.detailed(details, true)).split(ReportXhtml.SOURCE_HIDDEN, -1)).hasSize(3);
+        assertThat(render(SampleReport.detailed(details, true))
+            .split("These lines are not listed: your account lacks See Source Code permission on this project.", -1))
+            .hasSize(3);
         assertThat(render(clean)).contains("Every line is covered.", "No duplicated blocks.");
         assertThat(render(SampleReport.detailed(EnumSet.of(ReportSection.GATE), false)))
             .contains("Quality gate conditions").doesNotContain("Uncovered lines (", "Duplicated blocks (");
