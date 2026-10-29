@@ -93,8 +93,8 @@ function form(state, text) {
     const checked = format === FORMATS[0] ? ' checked' : '';
     const name = escape(text(`format.${format}`));
     const note = escape(text(`format.${format}.description`));
-    return `<label class="${BLOCK}__choice"><input type="checkbox" name="formats" value="${format}"${checked}>`
-      + `${icon(format, 'choice')}<span class="${BLOCK}__choice-name">${name}</span>`
+    return `<label class="${BLOCK}__tile"><input type="checkbox" name="formats" value="${format}"${checked}>`
+      + `${icon(format, 'tile')}<span class="${BLOCK}__choice-name">${name}</span>`
       + `<span class="${BLOCK}__choice-note">${note}</span></label>`;
   }).join('');
   const sections = SECTIONS.map((section) => {
@@ -109,10 +109,11 @@ function form(state, text) {
     + `<div class="${BLOCK}__picker"><select id="${BLOCK}-scope" name="scope" class="${BLOCK}__select">`
     + `<optgroup label="${escape(text('page.branches'))}">${options(branchScopes, state.selected)}</optgroup>`
     + `${pullRequests}</select>${icon('chevron', 'chevron')}</div></div>`
-    + `<fieldset class="${BLOCK}__fieldset"><legend class="${BLOCK}__label">${escape(text('page.format'))}</legend>`
-    + `<div class="${BLOCK}__choices">${formats}</div></fieldset>`
     + `<fieldset class="${BLOCK}__fieldset"><legend class="${BLOCK}__label">${escape(text('page.sections'))}</legend>`
     + `<div class="${BLOCK}__choices">${sections}</div></fieldset>`
+    + `<fieldset class="${BLOCK}__fieldset"><legend class="${BLOCK}__label">${escape(text('page.format'))}</legend>`
+    + `<p class="${BLOCK}__hint">${escape(text('page.format_hint'))}</p>`
+    + `<div class="${BLOCK}__tiles">${formats}</div></fieldset>`
     + `<div class="${BLOCK}__actions">`
     + `<button type="submit" name="as" value="together" class="${BLOCK}__button">${togetherLabel(1, text)}</button>`
     + `<button type="submit" name="as" value="each" class="${BLOCK}__button ${BLOCK}__button--secondary" hidden>`
