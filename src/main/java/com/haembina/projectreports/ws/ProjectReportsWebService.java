@@ -41,7 +41,7 @@ public final class ProjectReportsWebService implements WebService {
             .setDescription("Pull request id")
             .setExampleValue("42");
         action.createParam(DownloadAction.FORMAT)
-            .setDescription("Report format")
+            .setDescription("Comma-separated report formats; more than one answers a zip holding a report in each")
             .setPossibleValues(Arrays.stream(ReportFormat.values()).map(ReportFormat::key).toList())
             .setDefaultValue(ReportFormat.JSON.key());
         action.createParam(DownloadAction.SECTIONS)

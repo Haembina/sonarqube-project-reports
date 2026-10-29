@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ReportFormatTest {
@@ -18,6 +19,12 @@ class ReportFormatTest {
         assertThat(ReportFormat.fromKey("sarif").mediaType()).isEqualTo("application/sarif+json");
         assertThat(ReportFormat.fromKey("pdf").mediaType()).isEqualTo("application/pdf");
         assertThat(ReportFormat.fromKey("epub").mediaType()).isEqualTo("application/epub+zip");
+    }
+
+    @Test
+    void findsSeveralFormatsOnceEachInTheirOwnOrder() {
+        assertThat(ReportFormat.fromKeys(List.of("pdf", "json", "pdf")))
+            .containsExactly(ReportFormat.JSON, ReportFormat.PDF);
     }
 
     @Test
