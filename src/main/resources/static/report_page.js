@@ -167,11 +167,10 @@ function fail(status, message) {
   status.classList.add(`${BLOCK}__status--error`);
 }
 
-async function save(el, response) {
-  const name = FILE_NAME.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? 'report';
+function save(el, response, blob) {
   const link = el.ownerDocument.createElement('a');
-  link.href = URL.createObjectURL(await response.blob());
-  link.download = name;
+  link.href = URL.createObjectURL(blob);
+  link.download = FILE_NAME.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? 'report';
   link.click();
   URL.revokeObjectURL(link.href);
 }
@@ -199,7 +198,8 @@ async function download(el, start, submitted, as) {
       fail(status, text('page.failed', await failureOf(failed)));
       return;
     }
-    await Promise.all(responses.map((response) => save(el, response)));
+    const blobs = await Promise.all(responses.map((response) => response.blob()));
+    responses.forEach((response, index) => save(el, response, blobs[index]));
     status.textContent = '';
   } finally {
     buttons.forEach((button) => { button.disabled = false; });

@@ -16,7 +16,8 @@ function element() {
   const status = { textContent: '', classes, classList: { add: (name) => classes.add(name), remove: (name) => classes.delete(name) } };
   const button = { disabled: false, innerHTML: '' };
   const each = { disabled: false, hidden: true };
-  const anchor = { click: mock.fn() };
+  const anchor = { saved: [] };
+  anchor.click = mock.fn(() => anchor.saved.push(anchor.download));
   const named = { '[value="together"]': button, '[value="each"]': each };
   return {
     innerHTML: '',
@@ -37,7 +38,7 @@ function element() {
   };
 }
 
-function answer(body, { ok = true, headers = {}, json = true } = {}) {
+function answer(body, { ok = true, headers = {}, json = true, late = false } = {}) {
   return {
     ok,
     statusText: 'Bad Request',
@@ -48,7 +49,7 @@ function answer(body, { ok = true, headers = {}, json = true } = {}) {
       }
       return body;
     },
-    blob: async () => body,
+    blob: () => new Promise((resolve) => { setTimeout(() => resolve(body), late ? 20 : 0); }),
   };
 }
 
@@ -147,13 +148,15 @@ describe('the Reports page', () => {
     assert.equal(el.anchor.click.mock.callCount(), 1);
   });
 
-  test('downloads each ticked format as its own file, counting them', async () => {
+  test('downloads each ticked format as its own file, in the order ticked, counting them', async () => {
     const statuses = [];
     const { el } = await open(undefined, {
       '/api/project_reports/download': (url) => {
         statuses.push(el.status.textContent);
         const format = new URL(url, 'https://sonar.test').searchParams.get('format');
-        return answer('bytes', { headers: { 'Content-Disposition': `attachment; filename="acme-main-report.${format}"` } });
+        return answer('bytes', {
+          headers: { 'Content-Disposition': `attachment; filename="acme-main-report.${format}"` }, late: format === 'json',
+        });
       },
     });
 
@@ -163,8 +166,7 @@ describe('the Reports page', () => {
     assert.deepEqual(asked, ['json', 'csv', 'sarif'].map((format) =>
       `/api/project_reports/download?project=acme&format=${format}&sections=gate`));
     assert.deepEqual(statuses, Array(3).fill(`page.downloading_each${JSON.stringify({ 0: 3 })}`));
-    assert.equal(el.anchor.click.mock.callCount(), 3);
-    assert.equal(el.anchor.download, 'acme-main-report.sarif');
+    assert.deepEqual(el.anchor.saved, ['json', 'csv', 'sarif'].map((format) => `acme-main-report.${format}`));
     assert.equal(el.status.textContent, '');
     assert.equal(el.each.disabled, false);
   });
