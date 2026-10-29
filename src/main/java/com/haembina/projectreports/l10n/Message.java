@@ -28,6 +28,7 @@ public enum Message {
     API_SECTIONS("api.sections"),
     API_NO_BRANCH_PLUGIN("api.no_branch_plugin"),
     API_BRANCH_AND_PULL_REQUEST("api.branch_and_pull_request"),
+    API_NO_FORMAT("api.no_format"),
     API_UNKNOWN_FORMAT("api.unknown_format"),
     API_UNKNOWN_SECTION("api.unknown_section"),
 

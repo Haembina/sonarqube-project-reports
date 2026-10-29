@@ -19,6 +19,9 @@ const ICONS = {
     'M16 15l2 6l2 -6'],
   sarif: ['M12 21a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3c.539 1.832 .627 3.747 .283 5.588',
     'M15 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0', 'M20.2 20.2l1.8 1.8'],
+  zip: ['M6 20.735a2 2 0 0 1 -1 -1.735v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-1',
+    'M11 17a2 2 0 0 1 2 2v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-2a2 2 0 0 1 2 -2z', 'M11 5l-1 0', 'M13 7l-1 0', 'M11 9l-1 0',
+    'M13 11l-1 0', 'M11 13l-1 0', 'M13 15l-1 0'],
   download: ['M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2', 'M7 11l5 5l5 -5', 'M12 4l0 12'],
   chevron: ['M6 9l6 6l6 -6'],
   gate: ['M11.46 20.846a12 12 0 0 1 -7.96 -14.846a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3a12 12 0 0 1 -.09 7.06',
@@ -90,8 +93,8 @@ function form(state, text) {
     const checked = format === FORMATS[0] ? ' checked' : '';
     const name = escape(text(`format.${format}`));
     const note = escape(text(`format.${format}.description`));
-    return `<label class="${BLOCK}__choice"><input type="radio" name="format" value="${format}"${checked}>`
-      + `${icon(format, 'choice')}<span class="${BLOCK}__choice-name">${name}</span>`
+    return `<label class="${BLOCK}__tile"><input type="checkbox" name="formats" value="${format}"${checked}>`
+      + `${icon(format, 'tile')}<span class="${BLOCK}__choice-name">${name}</span>`
       + `<span class="${BLOCK}__choice-note">${note}</span></label>`;
   }).join('');
   const sections = SECTIONS.map((section) => {
@@ -106,13 +109,34 @@ function form(state, text) {
     + `<div class="${BLOCK}__picker"><select id="${BLOCK}-scope" name="scope" class="${BLOCK}__select">`
     + `<optgroup label="${escape(text('page.branches'))}">${options(branchScopes, state.selected)}</optgroup>`
     + `${pullRequests}</select>${icon('chevron', 'chevron')}</div></div>`
-    + `<fieldset class="${BLOCK}__fieldset"><legend class="${BLOCK}__label">${escape(text('page.format'))}</legend>`
-    + `<div class="${BLOCK}__choices">${formats}</div></fieldset>`
     + `<fieldset class="${BLOCK}__fieldset"><legend class="${BLOCK}__label">${escape(text('page.sections'))}</legend>`
     + `<div class="${BLOCK}__choices">${sections}</div></fieldset>`
-    + `<div class="${BLOCK}__actions"><button type="submit" class="${BLOCK}__button">${icon('download', 'button')}`
-    + `${escape(text('page.download'))}</button><p class="${BLOCK}__status" role="status" aria-live="polite"></p>`
-    + '</div></form>';
+    + `<fieldset class="${BLOCK}__fieldset"><legend class="${BLOCK}__label">${escape(text('page.format'))}</legend>`
+    + `<p class="${BLOCK}__hint">${escape(text('page.format_hint'))}</p>`
+    + `<div class="${BLOCK}__tiles">${formats}</div></fieldset>`
+    + `<div class="${BLOCK}__actions">`
+    + `<button type="submit" name="as" value="together" class="${BLOCK}__button">${togetherLabel(1, text)}</button>`
+    + `<button type="submit" name="as" value="each" class="${BLOCK}__button ${BLOCK}__button--secondary" hidden>`
+    + `${icon('download', 'button')}${escape(text('page.download_each'))}</button>`
+    + `<p class="${BLOCK}__status" role="status" aria-live="polite"></p></div></form>`;
+}
+
+function togetherLabel(count, text) {
+  return count > 1 ? `${icon('zip', 'button')}${escape(text('page.download_zip'))}`
+    : `${icon('download', 'button')}${escape(text('page.download'))}`;
+}
+
+function checkedValues(boxes) {
+  return Array.from(boxes).filter((box) => box.checked).map((box) => box.value);
+}
+
+function offerFormats(el, changed, text) {
+  if (changed.name !== 'formats') {
+    return;
+  }
+  const count = checkedValues(changed.form.elements.formats).length;
+  el.querySelector('[value="together"]').innerHTML = togetherLabel(count, text);
+  el.querySelector('[value="each"]').hidden = count < 2;
 }
 
 function render(el, state, text) {
@@ -121,8 +145,8 @@ function render(el, state, text) {
   el.innerHTML = `<div class="${BLOCK}"><h1 class="${BLOCK}__title">${escape(text('page.title'))}</h1>${body}</div>`;
 }
 
-function reportUrl(baseUrl, project, scope, format, sections) {
-  const params = new URLSearchParams({ project, format, sections: sections.join(',') });
+function reportUrl(baseUrl, project, scope, formats, sections) {
+  const params = new URLSearchParams({ project, format: formats.join(','), sections: sections.join(',') });
   const [kind, value] = scope.split(/:(.*)/su);
   if (kind !== 'main') {
     params.set(kind, value);
@@ -139,37 +163,47 @@ async function failureOf(response) {
   }
 }
 
-async function download(el, start, submitted) {
+function fail(status, message) {
+  status.textContent = message;
+  status.classList.add(`${BLOCK}__status--error`);
+}
+
+function save(el, response, blob) {
+  const link = el.ownerDocument.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = FILE_NAME.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? 'report';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+async function download(el, start, submitted, as) {
   const { baseUrl, component, text } = start;
   const status = el.querySelector(`.${BLOCK}__status`);
-  const button = el.querySelector(`.${BLOCK}__button`);
+  const buttons = Array.from(el.querySelectorAll(`.${BLOCK}__button`));
   const fields = submitted.elements;
-  const sections = Array.from(fields.sections).filter((box) => box.checked).map((box) => box.value);
-  if (sections.length === 0) {
-    status.textContent = text('page.no_sections');
-    status.classList.add(`${BLOCK}__status--error`);
+  const formats = checkedValues(fields.formats);
+  const sections = checkedValues(fields.sections);
+  if (formats.length === 0 || sections.length === 0) {
+    fail(status, text(formats.length === 0 ? 'page.no_formats' : 'page.no_sections'));
     return;
   }
-  status.textContent = text('page.downloading');
+  const batches = as === 'each' ? formats.map((format) => [format]) : [formats];
+  status.textContent = batches.length > 1 ? text('page.downloading_each', batches.length) : text('page.downloading');
   status.classList.remove(`${BLOCK}__status--error`);
-  button.disabled = true;
+  buttons.forEach((button) => { button.disabled = true; });
   try {
-    const response = await fetch(reportUrl(baseUrl, component.key, fields.scope.value, fields.format.value, sections),
-      { credentials: 'same-origin' });
-    if (!response.ok) {
-      status.textContent = text('page.failed', await failureOf(response));
-      status.classList.add(`${BLOCK}__status--error`);
+    const responses = await Promise.all(batches.map((batch) =>
+      fetch(reportUrl(baseUrl, component.key, fields.scope.value, batch, sections), { credentials: 'same-origin' })));
+    const failed = responses.find((response) => !response.ok);
+    if (failed) {
+      fail(status, text('page.failed', await failureOf(failed)));
       return;
     }
-    const name = FILE_NAME.exec(response.headers.get('Content-Disposition') ?? '')?.[1] ?? 'report';
-    const link = el.ownerDocument.createElement('a');
-    link.href = URL.createObjectURL(await response.blob());
-    link.download = name;
-    link.click();
-    URL.revokeObjectURL(link.href);
+    const blobs = await Promise.all(responses.map((response) => response.blob()));
+    responses.forEach((response, index) => save(el, response, blobs[index]));
     status.textContent = '';
   } finally {
-    button.disabled = false;
+    buttons.forEach((button) => { button.disabled = false; });
   }
 }
 
@@ -178,10 +212,12 @@ function startReportPage({ el, baseUrl, component, branchLike, intl }) {
   const state = { scopes: null, selected: currentScope(branchLike) };
   const onSubmit = (event) => {
     event.preventDefault();
-    return download(el, { baseUrl, component, text }, event.target);
+    return download(el, { baseUrl, component, text }, event.target, event.submitter?.value);
   };
+  const onChange = (event) => offerFormats(el, event.target, text);
   render(el, state, text);
   el.addEventListener('submit', onSubmit);
+  el.addEventListener('change', onChange);
   const loaded = Promise.all([
     getJson(baseUrl, 'api/project_branches/list', { project: component.key }),
     getJson(baseUrl, 'api/project_pull_requests/list', { project: component.key }),
@@ -191,6 +227,7 @@ function startReportPage({ el, baseUrl, component, branchLike, intl }) {
   });
   const stop = () => {
     el.removeEventListener('submit', onSubmit);
+    el.removeEventListener('change', onChange);
     el.innerHTML = '';
   };
   stop.loaded = loaded;

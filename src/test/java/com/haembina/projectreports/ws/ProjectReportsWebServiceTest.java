@@ -43,7 +43,7 @@ class ProjectReportsWebServiceTest {
         assertThat(action.param("branch").description())
             .isEqualTo("Branch name; the main branch when neither this nor pullRequest is set");
         assertThat(action.param("pullRequest").description()).isEqualTo("Pull request id");
-        assertThat(action.param("format").description()).isEqualTo("Report format");
+        assertThat(action.param("format").description()).isEqualTo("Comma-separated report formats; more than one answers a zip holding a report in each");
         assertThat(action.param("sections").description()).isEqualTo("Comma-separated sections the report holds; "
             + "every section when unset. coverage lists each uncovered and partly covered line, and duplications each "
             + "duplicated block, and both need See Source Code permission");
