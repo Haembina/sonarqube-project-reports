@@ -151,11 +151,6 @@ div:has(> .haembina-reports) {
   color: var(--echoes-color-icon-accent);
 }
 
-.haembina-reports__tile:has(input:focus-visible) {
-  outline: var(--echoes-focus-border-width-default) solid var(--echoes-color-focus-default);
-  outline-offset: var(--echoes-focus-border-offset-default);
-}
-
 .haembina-reports__actions {
   display: flex;
   flex-wrap: wrap;
