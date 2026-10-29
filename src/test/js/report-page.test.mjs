@@ -111,7 +111,9 @@ describe('the Reports page', () => {
     assert.match(html, /<option value="branch:feature\/&#60;x&#62;">feature\/&#60;x&#62;<\/option>/u);
     assert.match(html, /<option value="pullRequest:7">page\.pull_request\{"0":"7","1":"Add reports"\}/u);
     assert.match(html, /page\.pull_request\{"0":"8","1":"fix"\}/u);
-    assert.equal(el.innerHTML.match(/type="checkbox" name="formats"/gu).length, 7);
+    assert.equal(el.innerHTML.match(/class="haembina-reports__tile"><input type="checkbox" name="formats"/gu).length, 7);
+    assert.ok(el.innerHTML.indexOf('name="sections"') < el.innerHTML.indexOf('name="formats"'));
+    assert.match(el.innerHTML, /<legend[^>]*>page\.format\{\}<\/legend><p class="haembina-reports__hint">page\.format_hint\{\}<\/p>/u);
     assert.equal(el.innerHTML.match(/type="checkbox" name="sections" value="[a-z]+" checked/gu).length, 7);
     assert.match(el.innerHTML, /name="formats" value="json" checked/u);
     assert.match(el.innerHTML, /value="together"[^>]*>.*page\.download\{\}<\/button>/u);
