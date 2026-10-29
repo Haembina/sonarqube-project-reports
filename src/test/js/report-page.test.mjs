@@ -162,22 +162,23 @@ describe('the Reports page', () => {
     const asked = globalThis.fetch.mock.calls.slice(-3).map((call) => call.arguments[0]);
     assert.deepEqual(asked, ['json', 'csv', 'sarif'].map((format) =>
       `/api/project_reports/download?project=acme&format=${format}&sections=gate`));
-    assert.deepEqual(statuses, [1, 2, 3].map((index) => `page.downloading_each${JSON.stringify({ 0: index, 1: 3 })}`));
+    assert.deepEqual(statuses, Array(3).fill(`page.downloading_each${JSON.stringify({ 0: 3 })}`));
     assert.equal(el.anchor.click.mock.callCount(), 3);
     assert.equal(el.anchor.download, 'acme-main-report.sarif');
     assert.equal(el.status.textContent, '');
     assert.equal(el.each.disabled, false);
   });
 
-  test('stops at the first separate file that fails', async () => {
+  test('saves no separate file when one of them fails', async () => {
     const { el } = await open(undefined, {
-      '/api/project_reports/download': answer({ errors: [{ msg: 'gone' }] }, { ok: false }),
+      '/api/project_reports/download': (url) => (url.includes('format=pdf')
+        ? answer({ errors: [{ msg: 'gone' }] }, { ok: false }) : answer('bytes')),
     });
     const calls = globalThis.fetch.mock.callCount();
 
     await submit(el, 'main', ['json', 'pdf'], ['gate'], 'each');
 
-    assert.equal(globalThis.fetch.mock.callCount(), calls + 1);
+    assert.equal(globalThis.fetch.mock.callCount(), calls + 2);
     assert.equal(el.status.textContent, `page.failed${JSON.stringify({ 0: 'gone' })}`);
     assert.equal(el.anchor.click.mock.callCount(), 0);
   });

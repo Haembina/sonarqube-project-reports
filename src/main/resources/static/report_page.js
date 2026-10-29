@@ -188,20 +188,18 @@ async function download(el, start, submitted, as) {
     return;
   }
   const batches = as === 'each' ? formats.map((format) => [format]) : [formats];
+  status.textContent = batches.length > 1 ? text('page.downloading_each', batches.length) : text('page.downloading');
   status.classList.remove(`${BLOCK}__status--error`);
   buttons.forEach((button) => { button.disabled = true; });
   try {
-    for (const [index, batch] of batches.entries()) {
-      status.textContent = batches.length > 1 ? text('page.downloading_each', index + 1, batches.length)
-        : text('page.downloading');
-      const response = await fetch(reportUrl(baseUrl, component.key, fields.scope.value, batch, sections),
-        { credentials: 'same-origin' });
-      if (!response.ok) {
-        fail(status, text('page.failed', await failureOf(response)));
-        return;
-      }
-      await save(el, response);
+    const responses = await Promise.all(batches.map((batch) =>
+      fetch(reportUrl(baseUrl, component.key, fields.scope.value, batch, sections), { credentials: 'same-origin' })));
+    const failed = responses.find((response) => !response.ok);
+    if (failed) {
+      fail(status, text('page.failed', await failureOf(failed)));
+      return;
     }
+    await Promise.all(responses.map((response) => save(el, response)));
     status.textContent = '';
   } finally {
     buttons.forEach((button) => { button.disabled = false; });
