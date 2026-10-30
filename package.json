@@ -13,13 +13,13 @@
     "eslint-plugin-yml": "^3.9.0",
     "globals": "^17.13.0",
     "markdownlint-cli2": "^0.24.0",
-    "npm-groovy-lint": "^18.0.0",
     "stylelint": "^17.16.0",
     "stylelint-config-standard": "^40.0.0"
   },
   "scripts": {
-    "lint": "npm run lint:java",
+    "lint": "npm run lint:gradle && npm run lint:java",
     "lint:java": "sh gradlew compileJava compileTestJava",
+    "lint:gradle": "sh gradlew codenarcBuildScripts",
     "lint:md": "markdownlint-cli2",
     "test": "sh gradlew test && node --test src/test/js/",
     "test:coverage": "sh gradlew check && npm run test:page",

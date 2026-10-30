@@ -1,6 +1,7 @@
 plugins {
     id('java')
     id('jacoco')
+    id('codenarc')
     id('com.gradleup.shadow') version('9.6.1')
     id('net.ltgt.errorprone') version('5.1.1')
     id('info.solidsoft.pitest') version('1.19.0') apply(false)
@@ -33,6 +34,8 @@ dependencies {
     testImplementation('com.networknt:json-schema-validator:3.0.8')
     testRuntimeOnly('org.junit.platform:junit-platform-launcher')
     errorprone('com.google.errorprone:error_prone_core:2.51.0')
+    codenarc('org.codenarc:CodeNarc:3.7.0-groovy-4.0')
+    codenarc(platform('org.apache.groovy:groovy-bom:4.0.33'))
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -112,3 +115,17 @@ jacocoTestCoverageVerification {
 
 tasks.named('test') { finalizedBy('jacocoTestReport') }
 tasks.named('check') { dependsOn('jacocoTestCoverageVerification') }
+
+tasks.register('codenarcBuildScripts', CodeNarc) {
+    source = files('build.gradle', 'settings.gradle')
+    configFile = file('config/codenarc/build-scripts.config.groovy')
+    compilationClasspath = files()
+    maxPriority1Violations = 0
+    maxPriority2Violations = 0
+    maxPriority3Violations = Integer.MAX_VALUE
+    reports {
+        text.required = true
+        html.required = false
+        xml.required = false
+    }
+}
