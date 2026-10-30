@@ -1,5 +1,6 @@
 package com.haembina.projectreports.report.view;
 
+import com.haembina.projectreports.l10n.Message;
 import com.haembina.projectreports.report.Report;
 import com.haembina.projectreports.report.ReportTarget;
 import com.haembina.projectreports.report.ReportSection;
@@ -124,17 +125,19 @@ public record ReportView(String project, String scope, Gate gate, List<Condition
 
     static String scope(ReportTarget target, @Nullable String pullRequestTitle) {
         if (target.pullRequest() != null) {
-            String title = pullRequestTitle == null || pullRequestTitle.isBlank() ? "" : " – " + pullRequestTitle;
-            return "Pull request " + target.pullRequest() + title;
+            return pullRequestTitle == null || pullRequestTitle.isBlank()
+                ? Message.REPORT_PULL_REQUEST.text(target.pullRequest())
+                : Message.REPORT_PULL_REQUEST_TITLED.text(target.pullRequest(), pullRequestTitle);
         }
-        return target.branch() != null ? "Branch " + target.branch() : "Main branch";
+        return target.branch() != null ? Message.REPORT_BRANCH.text(target.branch())
+            : Message.REPORT_MAIN_BRANCH.text();
     }
 
     static Gate gate(@Nullable String status) {
         return switch (Objects.requireNonNullElse(status, "NONE")) {
-            case "OK" -> new Gate("Passed", "pass");
-            case "ERROR" -> new Gate("Failed", "fail");
-            default -> new Gate("Not computed", "none");
+            case "OK" -> new Gate(Message.REPORT_PASSED.text(), "pass");
+            case "ERROR" -> new Gate(Message.REPORT_FAILED.text(), "fail");
+            default -> new Gate(Message.REPORT_NOT_COMPUTED.text(), "none");
         };
     }
 
@@ -143,7 +146,8 @@ public record ReportView(String project, String scope, Gate gate, List<Condition
         boolean failed = "ERROR".equals(condition.status());
         return new Condition(MetricText.label(metric),
             MetricText.comparator(condition.comparator()) + " " + MetricText.value(metric, condition.threshold()),
-            MetricText.value(metric, condition.actual()), failed ? "Failed" : "Passed", failed ? "fail" : "pass");
+            MetricText.value(metric, condition.actual()),
+            failed ? Message.REPORT_FAILED.text() : Message.REPORT_PASSED.text(), failed ? "fail" : "pass");
     }
 
     static String location(@Nullable String file, @Nullable Integer line) {

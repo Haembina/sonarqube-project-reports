@@ -45,6 +45,10 @@ div:has(> .haembina-reports) {
   font: inherit;
 }
 
+.haembina-reports__select:hover {
+  background: var(--echoes-color-background-neutral-subtle-hover);
+}
+
 .haembina-reports__icon {
   flex: none;
   width: var(--echoes-dimension-width-200);
@@ -82,9 +86,14 @@ div:has(> .haembina-reports) {
 }
 
 .haembina-reports__choices {
+  overflow: hidden;
   border: var(--echoes-border-width-default) solid var(--echoes-color-border-weak);
   border-radius: var(--echoes-border-radius-400);
   background: var(--echoes-color-surface-default);
+}
+
+.haembina-reports__choice:hover {
+  background: var(--echoes-color-background-neutral-subtle-hover);
 }
 
 .haembina-reports__choice {
@@ -131,6 +140,10 @@ div:has(> .haembina-reports) {
   border-color: var(--echoes-color-border-accent-default);
   background: var(--echoes-color-background-accent-weak-default);
   box-shadow: inset 0 0 0 var(--echoes-border-width-default) var(--echoes-color-border-accent-default);
+}
+
+.haembina-reports__tile:has(input:checked):hover {
+  background: var(--echoes-color-background-accent-weak-hover);
 }
 
 .haembina-reports__tile input {

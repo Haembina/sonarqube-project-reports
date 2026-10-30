@@ -59,7 +59,8 @@ class EpubReportRendererTest {
         ReportView view = ReportView.of(SampleReport.full());
         String opf = EpubReportRenderer.opf(view, WRITTEN);
 
-        assertThat(opf).contains("<dc:identifier id=\"id\">urn:uuid:")
+        assertThat(opf).contains("unique-identifier=\"id\" xml:lang=\"en\" dir=\"ltr\">\n")
+            .contains("<dc:identifier id=\"id\">urn:uuid:")
             .contains("<dc:title>acme – Branch feature/x</dc:title>", "<dc:language>en</dc:language>")
             .contains("<meta property=\"dcterms:modified\">2026-10-28T12:30:45Z</meta>")
             .contains("<item id=\"nav\" href=\"nav.xhtml\" media-type=\"application/xhtml+xml\" properties=\"nav\"/>")
@@ -67,7 +68,9 @@ class EpubReportRendererTest {
             .contains("<item id=\"image1\" href=\"plugin-icon.png\" media-type=\"image/png\"/>")
             .contains("<itemref idref=\"report\"/>")
             .isEqualTo(EpubReportRenderer.opf(view, WRITTEN));
-        assertThat(EpubReportRenderer.nav(view)).contains("<nav epub:type=\"toc\"><ol><li><a href=\"report.xhtml\">acme</a>");
+        assertThat(EpubReportRenderer.nav(view))
+            .contains("xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"en\" xml:lang=\"en\" dir=\"ltr\">\n<head>")
+            .contains("<nav epub:type=\"toc\"><ol><li><a href=\"report.xhtml\">acme</a>");
     }
 
     @Test

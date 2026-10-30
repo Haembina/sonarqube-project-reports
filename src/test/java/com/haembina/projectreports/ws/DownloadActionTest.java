@@ -140,7 +140,8 @@ class DownloadActionTest {
         action.handle(request, response);
 
         verify(stream).setStatus(400);
-        assertThat(written.toString(StandardCharsets.UTF_8)).contains("need the haembina-branch-analysis plugin");
+        assertThat(written.toString(StandardCharsets.UTF_8)).isEqualTo("{\"errors\":[{\"msg\":\"Reports of a branch or "
+            + "pull request need the haembina-branch-analysis plugin, which this SonarQube does not have\"}]}");
     }
 
     @Test

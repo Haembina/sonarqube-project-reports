@@ -1,5 +1,6 @@
 package com.haembina.projectreports.report.view;
 
+import com.haembina.projectreports.l10n.Message;
 import com.haembina.projectreports.report.Report;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,6 @@ public final class LineRanges {
     }
 
     static String partial(Report.PartLine line) {
-        return line.line() + " (" + line.covered() + " of " + line.conditions() + " conditions)";
+        return Message.REPORT_PARTLY_COVERED_LINE.text(line.line(), line.covered(), line.conditions());
     }
 }

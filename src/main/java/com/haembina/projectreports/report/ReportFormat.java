@@ -1,5 +1,6 @@
 package com.haembina.projectreports.report;
 
+import com.haembina.projectreports.l10n.Message;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,7 +30,7 @@ public enum ReportFormat {
         return Arrays.stream(values())
             .filter(format -> format.key.equals(key))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Unknown report format: " + key));
+            .orElseThrow(() -> new IllegalArgumentException(Message.API_UNKNOWN_FORMAT.text(key)));
     }
 
     public static Set<ReportFormat> fromKeys(Collection<String> keys) {

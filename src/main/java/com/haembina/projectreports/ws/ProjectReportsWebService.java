@@ -1,5 +1,6 @@
 package com.haembina.projectreports.ws;
 
+import com.haembina.projectreports.l10n.Message;
 import com.haembina.projectreports.report.ReportFormat;
 import com.haembina.projectreports.report.ReportSection;
 import java.util.Arrays;
@@ -24,29 +25,28 @@ public final class ProjectReportsWebService implements WebService {
     @Override
     public void define(Context context) {
         NewController controller = context.createController(CONTROLLER)
-            .setDescription("Reports of a project's quality gate, measures and issues, for its main branch, a branch or a pull request.")
+            .setDescription(Message.API_CONTROLLER.text())
             .setSince("0.1");
         NewAction action = controller.createAction(DOWNLOAD)
-            .setDescription("Download a report of a project's main branch, a branch or a pull request. Requires Browse permission on the project.")
+            .setDescription(Message.API_DOWNLOAD.text())
             .setSince("0.1")
             .setHandler(downloadAction);
         action.createParam(DownloadAction.PROJECT)
-            .setDescription("Project key")
+            .setDescription(Message.API_PROJECT.text())
             .setRequired(true)
             .setExampleValue("my_project");
         action.createParam(DownloadAction.BRANCH)
-            .setDescription("Branch name; the main branch when neither this nor pullRequest is set")
+            .setDescription(Message.API_BRANCH.text())
             .setExampleValue("feature/my-branch");
         action.createParam(DownloadAction.PULL_REQUEST)
-            .setDescription("Pull request id")
+            .setDescription(Message.API_PULL_REQUEST.text())
             .setExampleValue("42");
         action.createParam(DownloadAction.FORMAT)
-            .setDescription("Comma-separated report formats; more than one answers a zip holding a report in each")
+            .setDescription(Message.API_FORMAT.text())
             .setPossibleValues(Arrays.stream(ReportFormat.values()).map(ReportFormat::key).toList())
             .setDefaultValue(ReportFormat.JSON.key());
         action.createParam(DownloadAction.SECTIONS)
-            .setDescription("Comma-separated sections the report holds; every section when unset. coverage lists each uncovered "
-                + "and partly covered line, and duplications each duplicated block, and both need See Source Code permission")
+            .setDescription(Message.API_SECTIONS.text())
             .setPossibleValues(Arrays.stream(ReportSection.values()).map(ReportSection::key).toList())
             .setExampleValue("gate,measures,coverage");
         controller.done();

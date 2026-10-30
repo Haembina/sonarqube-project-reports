@@ -1,5 +1,6 @@
 package com.haembina.projectreports.report;
 
+import com.haembina.projectreports.l10n.Language;
 import com.haembina.projectreports.report.document.ReportAssets;
 import com.haembina.projectreports.report.document.ReportXhtml;
 import com.haembina.projectreports.report.view.ReportIcons;
@@ -116,11 +117,12 @@ final class EpubReportRenderer implements ReportRenderer {
                 .append("\" media-type=\"image/png\"/>\n");
         }
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"id\" xml:lang=\"en\">\n"
+            + "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"id\" xml:lang=\""
+            + Language.DEFAULT.code() + "\" dir=\"" + Language.DEFAULT.direction() + "\">\n"
             + "  <metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"
             + "    <dc:identifier id=\"id\">urn:uuid:" + id + "</dc:identifier>\n"
             + "    <dc:title>" + title + "</dc:title>\n"
-            + "    <dc:language>en</dc:language>\n"
+            + "    <dc:language>" + Language.DEFAULT.code() + "</dc:language>\n"
             + "    <dc:publisher>" + ReportView.PLUGIN_NAME + "</dc:publisher>\n"
             + "    <meta property=\"dcterms:modified\">" + modified.truncatedTo(ChronoUnit.SECONDS) + "</meta>\n"
             + "  </metadata>\n  <manifest>\n"
@@ -138,8 +140,8 @@ final class EpubReportRenderer implements ReportRenderer {
 
     static String nav(ReportView view) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE html>\n"
-            + "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"en\""
-            + " xml:lang=\"en\">\n<head><title>" + ReportXhtml.escape(view.project()) + "</title></head>\n<body>\n"
+            + "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" "
+            + ReportXhtml.language() + ">\n<head><title>" + ReportXhtml.escape(view.project()) + "</title></head>\n<body>\n"
             + "<nav epub:type=\"toc\"><ol><li><a href=\"report.xhtml\">" + ReportXhtml.escape(view.project())
             + "</a></li></ol></nav>\n</body>\n</html>\n";
     }
