@@ -2,6 +2,12 @@
 
 Written by `@haembina/release`, never by hand (rule D9).
 
+## 0.3.1 (2026-10-30)
+
+### Bug Fixes
+
+* the download web service documents its response with an example report
+
 ## 0.3.0 (2026-10-30)
 
 ### Features
