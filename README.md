@@ -87,6 +87,7 @@ flowchart TD
 ├── .devcontainer/  The dev container, on the image CI builds in
 ├── .github/        The workflows and Dependabot's settings
 ├── LICENSES/       License texts, by SPDX identifier
+├── config/
 ├── docs/           How the plugin is tested
 ├── e2e/            The Playwright integration suite: a setup project boots and
 │                   seeds SonarQube with and without haembina-branch-analysis in
