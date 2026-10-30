@@ -1,0 +1,670 @@
+{
+  "schema": 1,
+  "package": {
+    "name": "@haembina/accessibility",
+    "version": "0.19.12",
+    "supports": [
+      "wcag-2.2-aa"
+    ]
+  },
+  "engine": {
+    "name": "axe-core",
+    "version": "4.14.0"
+  },
+  "commit": "128a3804f62a4ad29cf88f76c28c6e142515a44a",
+  "target": "wcag-2.2-aa",
+  "absences": [
+    "no-media",
+    "no-timing",
+    "no-pointer-gestures",
+    "no-motion-actuation"
+  ],
+  "screens": [
+    "reports page"
+  ],
+  "unfinished": [],
+  "passed": true,
+  "criteria": [
+    {
+      "criterion": "1.1.1",
+      "handle": "Non-text Content",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.2.1",
+      "handle": "Audio-only and Video-only (Prerecorded)",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-media",
+      "because": []
+    },
+    {
+      "criterion": "1.2.2",
+      "handle": "Captions (Prerecorded)",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-media",
+      "because": []
+    },
+    {
+      "criterion": "1.2.3",
+      "handle": "Audio Description or Media Alternative (Prerecorded)",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-media",
+      "because": []
+    },
+    {
+      "criterion": "1.2.4",
+      "handle": "Captions (Live)",
+      "level": "aa",
+      "verdict": "not-applicable",
+      "absence": "no-media",
+      "because": []
+    },
+    {
+      "criterion": "1.2.5",
+      "handle": "Audio Description (Prerecorded)",
+      "level": "aa",
+      "verdict": "not-applicable",
+      "absence": "no-media",
+      "because": []
+    },
+    {
+      "criterion": "1.3.1",
+      "handle": "Info and Relationships",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.3.2",
+      "handle": "Meaningful Sequence",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.3.3",
+      "handle": "Sensory Characteristics",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.3.4",
+      "handle": "Orientation",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.3.5",
+      "handle": "Identify Input Purpose",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.1",
+      "handle": "Use of Color",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.2",
+      "handle": "Audio Control",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-media",
+      "because": []
+    },
+    {
+      "criterion": "1.4.3",
+      "handle": "Contrast (Minimum)",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.4",
+      "handle": "Resize Text",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.5",
+      "handle": "Images of Text",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.10",
+      "handle": "Reflow",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.11",
+      "handle": "Non-text Contrast",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.12",
+      "handle": "Text Spacing",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "1.4.13",
+      "handle": "Content on Hover or Focus",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.1.1",
+      "handle": "Keyboard",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.1.2",
+      "handle": "No Keyboard Trap",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.1.4",
+      "handle": "Character Key Shortcuts",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.2.1",
+      "handle": "Timing Adjustable",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-timing",
+      "because": []
+    },
+    {
+      "criterion": "2.2.2",
+      "handle": "Pause, Stop, Hide",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-timing",
+      "because": []
+    },
+    {
+      "criterion": "2.3.1",
+      "handle": "Three Flashes or Below Threshold",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.1",
+      "handle": "Bypass Blocks",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.2",
+      "handle": "Page Titled",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.3",
+      "handle": "Focus Order",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.4",
+      "handle": "Link Purpose (In Context)",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.5",
+      "handle": "Multiple Ways",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.6",
+      "handle": "Headings and Labels",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.7",
+      "handle": "Focus Visible",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.4.11",
+      "handle": "Focus Not Obscured (Minimum)",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.5.1",
+      "handle": "Pointer Gestures",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-pointer-gestures",
+      "because": []
+    },
+    {
+      "criterion": "2.5.2",
+      "handle": "Pointer Cancellation",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-pointer-gestures",
+      "because": []
+    },
+    {
+      "criterion": "2.5.3",
+      "handle": "Label in Name",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "2.5.4",
+      "handle": "Motion Actuation",
+      "level": "a",
+      "verdict": "not-applicable",
+      "absence": "no-motion-actuation",
+      "because": []
+    },
+    {
+      "criterion": "2.5.7",
+      "handle": "Dragging Movements",
+      "level": "aa",
+      "verdict": "not-applicable",
+      "absence": "no-pointer-gestures",
+      "because": []
+    },
+    {
+      "criterion": "2.5.8",
+      "handle": "Target Size (Minimum)",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.1.1",
+      "handle": "Language of Page",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.1.2",
+      "handle": "Language of Parts",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.2.1",
+      "handle": "On Focus",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.2.2",
+      "handle": "On Input",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.2.3",
+      "handle": "Consistent Navigation",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.2.4",
+      "handle": "Consistent Identification",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.2.6",
+      "handle": "Consistent Help",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.3.1",
+      "handle": "Error Identification",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.3.2",
+      "handle": "Labels or Instructions",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.3.3",
+      "handle": "Error Suggestion",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.3.4",
+      "handle": "Error Prevention (Legal, Financial, Data)",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.3.7",
+      "handle": "Redundant Entry",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "3.3.8",
+      "handle": "Accessible Authentication (Minimum)",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "4.1.2",
+      "handle": "Name, Role, Value",
+      "level": "a",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    },
+    {
+      "criterion": "4.1.3",
+      "handle": "Status Messages",
+      "level": "aa",
+      "verdict": "passed",
+      "absence": null,
+      "because": []
+    }
+  ],
+  "houseRules": [
+    {
+      "rule": "heading-levels",
+      "holds": "no heading skips a level on the way down",
+      "stricterThan": [
+        {
+          "criterion": "1.3.1",
+          "handle": "Info and Relationships"
+        }
+      ],
+      "passed": true,
+      "because": []
+    },
+    {
+      "rule": "landmarks",
+      "holds": "at most one main, one banner and one contentinfo landmark",
+      "stricterThan": [
+        {
+          "criterion": "1.3.1",
+          "handle": "Info and Relationships"
+        }
+      ],
+      "passed": true,
+      "because": []
+    },
+    {
+      "rule": "regions",
+      "holds": "on a screen with a main landmark, nothing sits outside every landmark",
+      "stricterThan": [
+        {
+          "criterion": "1.3.1",
+          "handle": "Info and Relationships"
+        }
+      ],
+      "passed": true,
+      "because": []
+    },
+    {
+      "rule": "focus-order",
+      "holds": "Tab reaches the elements in document order",
+      "stricterThan": [
+        {
+          "criterion": "2.4.3",
+          "handle": "Focus Order"
+        }
+      ],
+      "passed": true,
+      "because": []
+    },
+    {
+      "rule": "positive-tabindex",
+      "holds": "no element has a positive tabindex",
+      "stricterThan": [
+        {
+          "criterion": "2.4.3",
+          "handle": "Focus Order"
+        }
+      ],
+      "passed": true,
+      "because": []
+    }
+  ],
+  "screenReader": null,
+  "texts": [
+    {
+      "key": "be0ffba4852e0594dfbf37a8f47af6c5baeaf778fd6ae7aa53dd1646674c19b3",
+      "kind": "heading",
+      "text": "Reports",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/be0ffba4852e0594dfbf37a8f47af6c5baeaf778fd6ae7aa53dd1646674c19b3.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "0a1fb2ea74957eb527abb76c3d2163e7b0e000da89eeb75d6b569eab1ceb49f1",
+      "kind": "label",
+      "text": "Duplicated blocksEach duplicated block and where else it appears",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/0a1fb2ea74957eb527abb76c3d2163e7b0e000da89eeb75d6b569eab1ceb49f1.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "0c359593158174dad4793dcf77907e8783ffa28211e53cf57a475b9c80c0af56",
+      "kind": "label",
+      "text": "IssuesEvery open issue",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/0c359593158174dad4793dcf77907e8783ffa28211e53cf57a475b9c80c0af56.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "17f646716d8608e2910553feb08524c3258bc02908be4be270aea906d92f2f19",
+      "kind": "label",
+      "text": "MarkdownTables for a pull request or a wiki",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/17f646716d8608e2910553feb08524c3258bc02908be4be270aea906d92f2f19.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "4ef456911cdef5f33d54ee2c59e3a9c340a44799e60195835c99cf94fc0f2478",
+      "kind": "label",
+      "text": "HTMLOne self-contained page",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/4ef456911cdef5f33d54ee2c59e3a9c340a44799e60195835c99cf94fc0f2478.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "55d087d0e292b223fb76db81076af43c438490771af66d57d0a7283ac02efcb9",
+      "kind": "label",
+      "text": "JSONEvery section, for scripts",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/55d087d0e292b223fb76db81076af43c438490771af66d57d0a7283ac02efcb9.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "69d104d488831898edca782cdc6b5c21530dbee5f76871f25b6a7408b6bf8a5a",
+      "kind": "label",
+      "text": "PDFA4 pages, ready to print",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/69d104d488831898edca782cdc6b5c21530dbee5f76871f25b6a7408b6bf8a5a.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "74456e2a23be6c2b929bbd9d19c04f121c2b8c0cf403cc2d7240c80a2bc74d62",
+      "kind": "label",
+      "text": "CSVOne file per section, in a zip",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/74456e2a23be6c2b929bbd9d19c04f121c2b8c0cf403cc2d7240c80a2bc74d62.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "883619f4053598f8eaf8b85dece401f104639eead59e70160fda735566638e62",
+      "kind": "label",
+      "text": "FilesCoverage, duplications and issues per file",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/883619f4053598f8eaf8b85dece401f104639eead59e70160fda735566638e62.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "91934f9833e2aee16005198bc19c5ffd22a1fde3db93f4a5d6db356a43f78514",
+      "kind": "label",
+      "text": "EPUBFor e-readers",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/91934f9833e2aee16005198bc19c5ffd22a1fde3db93f4a5d6db356a43f78514.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "97da3efbad264416fe2fa6404c63c758bf2d02fe3a4bda01f45dd5aa098bc741",
+      "kind": "label",
+      "text": "SARIFIssues and hotspots for code scanning tools",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/97da3efbad264416fe2fa6404c63c758bf2d02fe3a4bda01f45dd5aa098bc741.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "a3d8475a24b09286318b05460dbcf50b50972579f38acdfa58ccd37f58871693",
+      "kind": "label",
+      "text": "Branch or pull request",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/a3d8475a24b09286318b05460dbcf50b50972579f38acdfa58ccd37f58871693.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "cf1d62be6f0de400c6f5cea4421ed4a2fdf2775528c46f63cf2e134505ec8b43",
+      "kind": "label",
+      "text": "Security hotspotsEvery hotspot to review",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/cf1d62be6f0de400c6f5cea4421ed4a2fdf2775528c46f63cf2e134505ec8b43.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "e5b2f626775f8bc36aeca00a9f34ca2f735704e53df1b9d9494671dba6f7918e",
+      "kind": "label",
+      "text": "Quality gateIts status and each condition",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/e5b2f626775f8bc36aeca00a9f34ca2f735704e53df1b9d9494671dba6f7918e.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "e67e8defe47b8377a1ff51e32efc9b842d89b54ac8dd66a9929bb4bf1da4386e",
+      "kind": "label",
+      "text": "MeasuresCoverage, duplications, issue counts and ratings",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/e67e8defe47b8377a1ff51e32efc9b842d89b54ac8dd66a9929bb4bf1da4386e.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "f57765c86f47f68813377cb1d69af7c9fe2118ef0d486b083afef4462997ea15",
+      "kind": "label",
+      "text": "Uncovered linesEach uncovered and partly covered line",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/f57765c86f47f68813377cb1d69af7c9fe2118ef0d486b083afef4462997ea15.png",
+      "verdict": "unjudged"
+    },
+    {
+      "key": "0509173ff17a8a72e0a531a523312b19de18acab1c18d13be3f0dd7479dce2d4",
+      "kind": "title",
+      "text": "Reports",
+      "route": "/project/extension/haembinaprojectreports/report_page",
+      "crop": "accessibility-crops/0509173ff17a8a72e0a531a523312b19de18acab1c18d13be3f0dd7479dce2d4.png",
+      "verdict": "unjudged"
+    }
+  ]
+}
