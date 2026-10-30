@@ -1,0 +1,113 @@
+{
+  "target": {
+    "project": "my_project",
+    "branch": "feature/my-branch",
+    "pullRequest": null
+  },
+  "sections": [
+    "GATE",
+    "MEASURES",
+    "ISSUES",
+    "HOTSPOTS",
+    "FILES",
+    "COVERAGE",
+    "DUPLICATIONS"
+  ],
+  "qualityGate": {
+    "status": "ERROR",
+    "conditions": [
+      {
+        "metric": "new_coverage",
+        "comparator": "LT",
+        "threshold": "80",
+        "actual": "64.2",
+        "status": "ERROR"
+      }
+    ]
+  },
+  "measures": [
+    {
+      "metric": "coverage",
+      "value": "81.3"
+    },
+    {
+      "metric": "ncloc",
+      "value": "4210"
+    }
+  ],
+  "issues": [
+    {
+      "key": "example-issue-1",
+      "rule": "java:S1192",
+      "severity": "CRITICAL",
+      "type": "CODE_SMELL",
+      "file": "src/main/java/com/example/Billing.java",
+      "line": 42,
+      "message": "Define a constant instead of duplicating this literal \"invoice\" 3 times.",
+      "status": "OPEN",
+      "creationDate": "2026-10-28T07:06:28+0000"
+    }
+  ],
+  "hotspots": [
+    {
+      "key": "example-hotspot-1",
+      "rule": "java:S2245",
+      "file": "src/main/java/com/example/Tokens.java",
+      "line": 17,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "resolution": null
+    }
+  ],
+  "files": [
+    {
+      "key": "my_project:src/main/java/com/example/Billing.java",
+      "path": "src/main/java/com/example/Billing.java",
+      "measures": {
+        "coverage": "72.5",
+        "ncloc": "180",
+        "violations": "1"
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "path": "src/main/java/com/example/Billing.java",
+      "uncovered": [
+        51,
+        52
+      ],
+      "partial": [
+        {
+          "line": 44,
+          "covered": 1,
+          "conditions": 2
+        }
+      ]
+    }
+  ],
+  "duplications": [
+    {
+      "path": "src/main/java/com/example/Billing.java",
+      "from": 60,
+      "to": 74,
+      "copies": [
+        {
+          "path": "src/main/java/com/example/Refunds.java",
+          "from": 31,
+          "to": 45
+        }
+      ]
+    }
+  ],
+  "sourceHidden": false,
+  "links": {
+    "repository": "example/billing",
+    "repositoryUrl": "https://github.com/example/billing",
+    "scopeUrl": "https://github.com/example/billing/tree/feature/my-branch",
+    "sonarUrl": "https://sonarqube.example.com/dashboard?id\u003dmy_project\u0026branch\u003dfeature%2Fmy-branch",
+    "pullRequestTitle": null
+  }
+}

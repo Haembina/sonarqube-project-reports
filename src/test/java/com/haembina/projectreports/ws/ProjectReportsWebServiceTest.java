@@ -3,6 +3,10 @@ package com.haembina.projectreports.ws;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
+import com.google.gson.Gson;
+import com.haembina.projectreports.report.Report;
+import com.haembina.projectreports.report.ReportFormat;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.sonar.api.platform.Server;
 import org.sonar.api.server.ws.WebService;
@@ -47,6 +51,15 @@ class ProjectReportsWebServiceTest {
         assertThat(action.param("sections").description()).isEqualTo("Comma-separated sections the report holds; "
             + "every section when unset. coverage lists each uncovered and partly covered line, and duplications each "
             + "duplicated block, and both need See Source Code permission");
+    }
+
+    @Test
+    void showsAJsonReportAsTheResponseExample() {
+        String example = download(new ProjectReportsWebService(mock(Server.class))).responseExampleAsString();
+        Report report = new Gson().fromJson(example, Report.class);
+
+        assertThat(new String(ReportFormat.JSON.renderer().render(report), StandardCharsets.UTF_8))
+            .isEqualTo(example.stripTrailing());
     }
 
     @Test

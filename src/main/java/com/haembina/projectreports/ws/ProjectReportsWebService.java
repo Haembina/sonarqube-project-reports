@@ -30,6 +30,7 @@ public final class ProjectReportsWebService implements WebService {
         NewAction action = controller.createAction(DOWNLOAD)
             .setDescription(Message.API_DOWNLOAD.text())
             .setSince("0.1")
+            .setResponseExample(ProjectReportsWebService.class.getResource("download-example.json"))
             .setHandler(downloadAction);
         action.createParam(DownloadAction.PROJECT)
             .setDescription(Message.API_PROJECT.text())
