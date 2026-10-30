@@ -3,7 +3,7 @@ plugins {
     id('jacoco')
     id('codenarc')
     id('com.gradleup.shadow') version('9.6.1')
-    id('net.ltgt.errorprone') version('5.1.1')
+    id('net.ltgt.errorprone') version('5.2.0')
     id('info.solidsoft.pitest') version('1.19.0') apply(false)
 }
 
@@ -34,8 +34,8 @@ dependencies {
     testImplementation('com.networknt:json-schema-validator:3.0.8')
     testRuntimeOnly('org.junit.platform:junit-platform-launcher')
     errorprone('com.google.errorprone:error_prone_core:2.51.0')
-    codenarc('org.codenarc:CodeNarc:3.7.0-groovy-4.0')
-    codenarc(platform('org.apache.groovy:groovy-bom:4.0.33'))
+    codenarc('org.codenarc:CodeNarc:4.0.0')
+    codenarc(platform('org.apache.groovy:groovy-bom:6.0.0'))
 }
 
 tasks.withType(JavaCompile).configureEach {
