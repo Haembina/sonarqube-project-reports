@@ -1,6 +1,6 @@
 {
   "name": "haembina-project-reports",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "One downloadable report per SonarQube Community Build project, branch or pull request: the quality gate, measures, issues, hotspots, coverage and duplications.",
@@ -32,6 +32,7 @@
   "overrides": {
     "axios": "^1.21.0",
     "katex": "^0.19.0",
+    "re2js": "^2.9.1",
     "smol-toml": "^1.9.0"
   },
   "allowScripts": {

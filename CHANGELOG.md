@@ -2,6 +2,21 @@
 
 Written by `@haembina/release`, never by hand (rule D9).
 
+## 0.3.0 (2026-10-30)
+
+### Features
+
+* list a report's sections first and pick its formats from tiles #14.1 #14.2
+* download a report in several formats with one click
+
+### Bug Fixes
+
+* a checked format tile shows it is under the pointer too
+* the Reports page's branch picker and section rows show they are under the pointer
+* save the separate report files in the order their formats are listed
+* fetch the separate report files together and save none when one fails
+* update the libraries it is built on
+
 ## 0.2.1 (2026-10-28)
 
 ### Bug Fixes
