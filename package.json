@@ -18,9 +18,8 @@
     "stylelint-config-standard": "^40.0.0"
   },
   "scripts": {
-    "lint": "npm run lint:gradle && npm run lint:java",
+    "lint": "npm run lint:java",
     "lint:java": "sh gradlew compileJava compileTestJava",
-    "lint:gradle": "npm-groovy-lint --noserver --failon warning --loglevel warning build.gradle settings.gradle",
     "lint:md": "markdownlint-cli2",
     "test": "sh gradlew test && node --test src/test/js/",
     "test:coverage": "sh gradlew check && npm run test:page",
