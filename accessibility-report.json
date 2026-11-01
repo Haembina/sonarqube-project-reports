@@ -2,7 +2,7 @@
   "schema": 1,
   "package": {
     "name": "@haembina/accessibility",
-    "version": "0.19.12",
+    "version": "0.20.1",
     "supports": [
       "wcag-2.2-aa"
     ]
@@ -11,7 +11,7 @@
     "name": "axe-core",
     "version": "4.14.0"
   },
-  "commit": "128a3804f62a4ad29cf88f76c28c6e142515a44a",
+  "commit": "c05662a84d8857d26bc0984aa6c13ef45a717187",
   "target": "wcag-2.2-aa",
   "absences": [
     "no-media",
@@ -531,11 +531,11 @@
   "screenReader": null,
   "texts": [
     {
-      "key": "be0ffba4852e0594dfbf37a8f47af6c5baeaf778fd6ae7aa53dd1646674c19b3",
+      "key": "604ab23e9be07f8feba54a8a5a95bbce713592fdf883ff6afea87b72ab167bd2",
       "kind": "heading",
       "text": "Reports",
       "route": "/project/extension/haembinaprojectreports/report_page",
-      "crop": "accessibility-crops/be0ffba4852e0594dfbf37a8f47af6c5baeaf778fd6ae7aa53dd1646674c19b3.png",
+      "crop": "accessibility-crops/604ab23e9be07f8feba54a8a5a95bbce713592fdf883ff6afea87b72ab167bd2.png",
       "verdict": "unjudged"
     },
     {
