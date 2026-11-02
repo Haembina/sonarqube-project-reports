@@ -86,7 +86,7 @@ flowchart TD
 .
 ├── .devcontainer/  The dev container, on the image CI builds in
 ├── .github/        The workflows and Dependabot's settings
-├── .vscode/
+├── .vscode/        The editor settings and extensions conventions-init writes
 ├── LICENSES/       License texts, by SPDX identifier
 ├── config/         The CodeNarc rules the Gradle scripts are linted with
 ├── docs/           How the plugin is tested
