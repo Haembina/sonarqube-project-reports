@@ -60,6 +60,27 @@ class SarifReportRendererTest {
     }
 
     @Test
+    void writesEveryFieldOfAnIssueAndAHotspotResult() {
+        Report report = new Report(new ReportTarget("acme", null, null), new Report.QualityGate("OK", List.of()),
+            List.of(), List.of(new Report.Issue("i", "js:S1", "MAJOR", "BUG", "src/a.js", 3, "m", "OPEN", null)),
+            List.of(new Report.Hotspot("h", "js:S2", "src/b.js", 5, "n", "weak-cryptography", "LOW", "TO_REVIEW",
+                null)), List.of());
+
+        JsonObject sarif = JsonParser.parseString(render(report)).getAsJsonObject();
+
+        assertThat(sarif.get("$schema").getAsString()).isEqualTo("https://json.schemastore.org/sarif-2.1.0.json");
+        assertThat(sarif.getAsJsonArray("runs").get(0).getAsJsonObject().getAsJsonArray("results"))
+            .isEqualTo(JsonParser.parseString("""
+                [{"ruleId": "js:S1", "level": "warning", "message": {"text": "m"},
+                  "locations": [{"physicalLocation": {"artifactLocation": {"uri": "src/a.js"}, "region": {"startLine": 3}}}],
+                  "properties": {"sonarKind": "issue", "sonarKey": "i", "sonarCategory": "BUG"}},
+                 {"ruleId": "js:S2", "level": "note", "message": {"text": "n"},
+                  "locations": [{"physicalLocation": {"artifactLocation": {"uri": "src/b.js"}, "region": {"startLine": 5}}}],
+                  "properties": {"sonarKind": "securityHotspot", "sonarKey": "h", "sonarCategory": "weak-cryptography"}}]
+                """));
+    }
+
+    @Test
     void holdsNoResultWhenNeitherIssuesNorHotspotsAreChosen() {
         JsonObject run = JsonParser.parseString(render(SampleReport.detailed(EnumSet.of(ReportSection.COVERAGE),
             false))).getAsJsonObject().getAsJsonArray("runs").get(0).getAsJsonObject();

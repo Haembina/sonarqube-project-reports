@@ -42,6 +42,40 @@ class IssueCollectorTest {
     }
 
     @Test
+    void readsTheWholeTargetAtExactlyTheCap() {
+        FakeConnector connector = new FakeConnector((path, params) -> "1".equals(params.get("p"))
+            ? issues(SearchPager.RESULT_CAP, "whole") : issues(SearchPager.RESULT_CAP));
+
+        List<Report.Issue> found = new IssueCollector(new SearchPager(new LocalApi(connector)))
+            .collect(TARGET, List.of(file("a", "1")));
+
+        assertThat(found).extracting(Report.Issue::key).containsExactly("whole");
+        assertThat(connector.calls()).allMatch(call -> "acme".equals(call.get("componentKeys")));
+    }
+
+    @Test
+    void readsAFileAtExactlyTheCapWithoutSplittingIt() {
+        FakeConnector connector = new FakeConnector((path, params) -> {
+            if ("acme".equals(params.get("componentKeys"))) {
+                return issues(12_000);
+            }
+            if (params.containsKey("facets")) {
+                return "{\"paging\":{\"total\":10000},\"issues\":[],\"facets\":[{\"property\":\"rules\",\"values\":["
+                    + "{\"val\":\"js:S9\",\"count\":10000}]}]}";
+            }
+            if (params.containsKey("rules")) {
+                return issues(1, "by-rule");
+            }
+            return "1".equals(params.get("p")) ? issues(SearchPager.RESULT_CAP, "plain") : issues(SearchPager.RESULT_CAP);
+        });
+
+        List<Report.Issue> found = new IssueCollector(new SearchPager(new LocalApi(connector)))
+            .collect(TARGET, List.of(file("big", String.valueOf(SearchPager.RESULT_CAP))));
+
+        assertThat(found).extracting(Report.Issue::key).containsExactly("plain");
+    }
+
+    @Test
     void readsFileByFileOverTheCap() {
         FakeConnector connector = new FakeConnector((path, params) -> switch (params.get("componentKeys")) {
             case "acme" -> issues(12_000);

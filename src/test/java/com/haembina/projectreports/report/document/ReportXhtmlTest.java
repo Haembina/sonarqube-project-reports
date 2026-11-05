@@ -58,6 +58,14 @@ class ReportXhtmlTest {
     }
 
     @Test
+    void headsNumberColumnsApartFromTextColumns() {
+        assertThat(ReportXhtml.document(full(), EMBEDDING)).contains("<thead><tr><th class=\"report-table__head\">"
+            + Message.COLUMN_METRIC.text() + "</th><th class=\"report-table__head report-table__head--number\">"
+            + Message.COLUMN_OVERALL.text() + "</th><th class=\"report-table__head report-table__head--number\">"
+            + Message.COLUMN_NEW_CODE.text() + "</th></tr></thead>");
+    }
+
+    @Test
     void declaresEveryIconOnce() {
         assertThat(ReportXhtml.iconRules(EMBEDDING))
             .contains(".report-icon--check-pass { background-image: url(\"/icons/check-pass.png\"); }\n")
