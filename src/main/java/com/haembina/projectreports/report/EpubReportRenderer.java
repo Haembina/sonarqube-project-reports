@@ -80,11 +80,9 @@ final class EpubReportRenderer implements ReportRenderer {
         try (ZipOutputStream zip = new ZipOutputStream(output, StandardCharsets.UTF_8)) {
             zip.putNextEntry(stored(text(MIMETYPE)));
             zip.write(text(MIMETYPE));
-            zip.closeEntry();
             for (Map.Entry<String, byte[]> file : files.entrySet()) {
                 zip.putNextEntry(new ZipEntry(file.getKey()));
                 zip.write(file.getValue());
-                zip.closeEntry();
             }
         } catch (IOException failure) {
             throw new UncheckedIOException(failure);
@@ -97,7 +95,6 @@ final class EpubReportRenderer implements ReportRenderer {
         crc.update(content);
         entry.setMethod(ZipEntry.STORED);
         entry.setSize(content.length);
-        entry.setCompressedSize(content.length);
         entry.setCrc(crc.getValue());
         return entry;
     }

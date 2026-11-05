@@ -102,7 +102,6 @@ final class DownloadAction implements RequestHandler {
             for (ReportFormat format : formats) {
                 zip.putNextEntry(new ZipEntry(stem + "." + format.extension()));
                 zip.write(format.renderer().render(report));
-                zip.closeEntry();
             }
         }
     }

@@ -30,7 +30,6 @@ final class CsvReportRenderer implements ReportRenderer {
                     line(csv, cells);
                 }
                 zip.write(csv.toString().getBytes(StandardCharsets.UTF_8));
-                zip.closeEntry();
             }
         } catch (IOException failure) {
             throw new UncheckedIOException(failure);
