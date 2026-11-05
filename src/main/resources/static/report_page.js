@@ -282,18 +282,18 @@ async function copy(el, start, submitted, kind) {
   }
   status.textContent = text('page.copying');
   const pending = source.produce();
-  const settled = pending.then((value) => ({ value }), (failure) => ({ failure }));
+  const settled = pending.then((value) => ({ value }), (error) => ({ error }));
   const copied = await written(pending);
-  const { value, failure } = await settled;
-  if (failure) {
-    fail(status, text('page.copy_failed', failure.message));
+  const outcome = await settled;
+  if (outcome.error) {
+    fail(status, text('page.copy_failed', outcome.error.message));
     return;
   }
   if (copied) {
     status.textContent = text(`page.copied_${kind}`);
     return;
   }
-  box.value = value;
+  box.value = outcome.value;
   box.hidden = false;
   box.focus();
   box.select();

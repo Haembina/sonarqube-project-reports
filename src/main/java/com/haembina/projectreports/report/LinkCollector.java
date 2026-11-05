@@ -17,6 +17,8 @@ final class LinkCollector {
 
 
     private static final String GIT_SUFFIX = ".git";
+    private static final String PROJECT = "project";
+    private static final String REPOSITORY = "{repository}";
     private static final String SCM_PREFIX = "scm:git:";
 
     private final LocalApi api;
@@ -28,7 +30,7 @@ final class LinkCollector {
     }
 
     Report.Links collect(ReportTarget target) {
-        JsonObject binding = answer("api/alm_settings/get_binding", Map.of("project", target.project()));
+        JsonObject binding = answer("api/alm_settings/get_binding", Map.of(PROJECT, target.project()));
         String repositoryUrl = Optional.ofNullable(scmLink(target)).orElseGet(() -> boundUrl(binding));
         GitProvider provider = GitProvider.ofAlm(JsonFields.text(binding, "alm"))
             .or(() -> repositoryUrl == null ? Optional.empty() : GitProvider.ofUrl(repositoryUrl)).orElse(null);
@@ -45,12 +47,12 @@ final class LinkCollector {
         if (provider == null || repositoryUrl == null || revision == null) {
             return null;
         }
-        return provider.linePattern().replace("{repository}", repositoryUrl).replace("{revision}", encoded(revision));
+        return provider.linePattern().replace(REPOSITORY, repositoryUrl).replace("{revision}", encoded(revision));
     }
 
     @Nullable
     private String revision(ReportTarget target) {
-        Map<String, String> params = target.params("project");
+        Map<String, String> params = target.params(PROJECT);
         params.put("ps", "1");
         for (JsonElement element : JsonFields.array(answer("api/project_analyses/search", params), "analyses")) {
             String revision = JsonFields.text(element.getAsJsonObject(), "revision");
@@ -156,7 +158,7 @@ final class LinkCollector {
             return new JsonObject();
         }
         for (JsonElement element : JsonFields.array(
-            answer("api/project_pull_requests/list", Map.of("project", target.project())), "pullRequests")) {
+            answer("api/project_pull_requests/list", Map.of(PROJECT, target.project())), "pullRequests")) {
             JsonObject pullRequest = element.getAsJsonObject();
             if (target.pullRequest().equals(JsonFields.text(pullRequest, "key"))) {
                 return pullRequest;
@@ -184,10 +186,10 @@ final class LinkCollector {
     @Nullable
     private static String fill(@Nullable String pattern, @Nullable String repositoryUrl, String placeholder,
         String value) {
-        if (pattern == null || (repositoryUrl == null && pattern.contains("{repository}"))) {
+        if (pattern == null || (repositoryUrl == null && pattern.contains(REPOSITORY))) {
             return null;
         }
-        return pattern.replace("{repository}", repositoryUrl == null ? "" : repositoryUrl)
+        return pattern.replace(REPOSITORY,repositoryUrl == null ? "" : repositoryUrl)
             .replace(placeholder, encoded(value));
     }
 

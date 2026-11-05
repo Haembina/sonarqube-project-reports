@@ -16,7 +16,7 @@ public enum GitProvider {
         "{repository}/-/merge_requests/{pullRequest}", "{repository}/-/blob/{revision}/{path}#L{line}"), true),
     BITBUCKET_CLOUD("bitbucketcloud", "bitbucket.org", new Patterns("{repository}/src/{branch}",
         "{repository}/pull-requests/{pullRequest}", "{repository}/src/{revision}/{path}#lines-{line}"), false),
-    BITBUCKET_SERVER("bitbucket", "bitbucket", new Patterns("{repository}/browse?at=refs%2Fheads%2F{branch}",
+    BITBUCKET_SERVER(GitProvider.BITBUCKET, GitProvider.BITBUCKET, new Patterns("{repository}/browse?at=refs%2Fheads%2F{branch}",
         "{repository}/pull-requests/{pullRequest}", "{repository}/browse/{path}?at={revision}#{line}"), false),
     AZURE_DEVOPS("azure", "dev.azure.com", new Patterns("{repository}?version=GB{branch}",
         "{repository}/pullrequest/{pullRequest}", "{repository}?path=/{path}&version=GC{revision}&line={line}"),

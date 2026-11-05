@@ -150,7 +150,7 @@ class DownloadActionTest {
                 files.put(entry.getName(), new String(zip.readAllBytes(), StandardCharsets.UTF_8));
             }
         }
-        assertThat(files.get("acme-main-report.md")).isEqualTo("**acme** · Quality gate: ✓ Passed · "
+        assertThat(files).containsEntry("acme-main-report.md", "**acme** · Quality gate: ✓ Passed · "
             + "[Main branch](https://sonar.test/dashboard?id=acme)\n");
         assertThat(files.get("acme-main-report.json")).contains("\"status\": \"OK\"");
     }
