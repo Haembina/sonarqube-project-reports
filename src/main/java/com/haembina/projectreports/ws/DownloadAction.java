@@ -7,9 +7,12 @@ import com.google.gson.JsonObject;
 import com.haembina.projectreports.api.ApiCallException;
 import com.haembina.projectreports.api.LocalApi;
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.GitProvider;
 import com.haembina.projectreports.report.Report;
 import com.haembina.projectreports.report.ReportCollector;
 import com.haembina.projectreports.report.ReportFormat;
+import com.haembina.projectreports.report.ReportLayout;
+import com.haembina.projectreports.report.ReportRenderer;
 import com.haembina.projectreports.report.ReportSection;
 import com.haembina.projectreports.report.ReportTarget;
 import java.io.IOException;
@@ -19,7 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.sonar.api.platform.Server;
@@ -40,6 +45,8 @@ final class DownloadAction implements RequestHandler {
     static final String PULL_REQUEST = "pullRequest";
     static final String FORMAT = "format";
     static final String SECTIONS = "sections";
+    static final String LAYOUT = "layout";
+    static final String FLAVOR = "flavor";
 
     private static final String ERROR_MEDIA_TYPE = "application/json";
     private static final String ARCHIVE_MEDIA_TYPE = "application/zip";
@@ -68,6 +75,10 @@ final class DownloadAction implements RequestHandler {
         if (formats.isEmpty()) {
             throw new IllegalArgumentException(Message.API_NO_FORMAT.text());
         }
+        ReportLayout layout = ReportLayout.fromKey(
+            Objects.requireNonNullElse(request.param(LAYOUT), ReportLayout.DOCUMENT.key()));
+        Optional<GitProvider> flavor = GitProvider.ofFlavor(
+            Objects.requireNonNullElse(request.param(FLAVOR), GitProvider.AUTO));
         Set<ReportSection> sections = ReportSection.fromKeys(
             Objects.requireNonNullElse(request.paramAsStrings(SECTIONS), List.of()));
         LocalApi api = new LocalApi(request.localConnector());
@@ -86,9 +97,10 @@ final class DownloadAction implements RequestHandler {
         if (formats.size() == 1) {
             ReportFormat format = formats.iterator().next();
             write(response, 200, format.mediaType(), stem + "." + format.extension(),
-                bytes(format.renderer().render(report)));
+                bytes(format.renderer(layout, flavor).render(report)));
         } else {
-            write(response, 200, ARCHIVE_MEDIA_TYPE, stem + "s.zip", output -> archive(report, formats, stem, output));
+            write(response, 200, ARCHIVE_MEDIA_TYPE, stem + "s.zip",
+                output -> archive(report, formats, stem, output, format -> format.renderer(layout, flavor)));
         }
     }
 
@@ -96,12 +108,12 @@ final class DownloadAction implements RequestHandler {
         return output -> output.write(body);
     }
 
-    private static void archive(Report report, Set<ReportFormat> formats, String stem, OutputStream output)
-        throws IOException {
+    private static void archive(Report report, Set<ReportFormat> formats, String stem, OutputStream output,
+        Function<ReportFormat, ReportRenderer> renderers) throws IOException {
         try (ZipOutputStream zip = new ZipOutputStream(output, StandardCharsets.UTF_8)) {
             for (ReportFormat format : formats) {
                 zip.putNextEntry(new ZipEntry(stem + "." + format.extension()));
-                zip.write(format.renderer().render(report));
+                zip.write(renderers.apply(format).render(report));
                 zip.closeEntry();
             }
         }

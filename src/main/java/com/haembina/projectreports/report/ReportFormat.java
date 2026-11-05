@@ -5,6 +5,7 @@ import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 public enum ReportFormat {
@@ -52,6 +53,13 @@ public enum ReportFormat {
     }
 
     public ReportRenderer renderer() {
+        return renderer(ReportLayout.DOCUMENT, Optional.empty());
+    }
+
+    public ReportRenderer renderer(ReportLayout layout, Optional<GitProvider> flavor) {
+        if (this == MARKDOWN && layout != ReportLayout.DOCUMENT) {
+            return layout == ReportLayout.COMMENT ? new CommentReportRenderer(flavor) : new StatusLineRenderer();
+        }
         return switch (this) {
             case JSON -> new JsonReportRenderer();
             case MARKDOWN -> new MarkdownReportRenderer();

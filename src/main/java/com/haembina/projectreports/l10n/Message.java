@@ -31,6 +31,10 @@ public enum Message {
     API_NO_FORMAT("api.no_format"),
     API_UNKNOWN_FORMAT("api.unknown_format"),
     API_UNKNOWN_SECTION("api.unknown_section"),
+    API_LAYOUT("api.layout"),
+    API_FLAVOR("api.flavor"),
+    API_UNKNOWN_LAYOUT("api.unknown_layout"),
+    API_UNKNOWN_FLAVOR("api.unknown_flavor"),
 
     SETTINGS_BRANCH_URL("settings.branch_url.name"),
     SETTINGS_BRANCH_URL_DESCRIPTION("settings.branch_url.description"),
@@ -53,6 +57,7 @@ public enum Message {
     REPORT_PARTLY_COVERED_LINE("report.partly_covered_line"),
     REPORT_LINE_UNCOVERED("report.line.uncovered"),
     REPORT_LINE_PARTLY_COVERED("report.line.partly_covered"),
+    REPORT_MORE_ROWS("report.more_rows"),
 
     HEADING_CONDITIONS("report.heading.conditions"),
     HEADING_MEASURES("report.heading.measures"),

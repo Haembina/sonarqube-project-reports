@@ -127,6 +127,14 @@ class MarkdownReportRendererTest {
     }
 
     @Test
+    void linksEachLocationToItsLineOnTheGitProvider() {
+        assertThat(render(SampleReport.linked(SampleReport.full(), SampleReport.githubLinks())))
+            .contains("| [`src/app.js:2`](https://github.com/Acme/app/blob/abc/src/app.js#L2) |")
+            .contains("| [`src/app.js:5`](https://github.com/Acme/app/blob/abc/src/app.js#L5) |")
+            .contains("| `—` |", "| `src/b.js` |");
+    }
+
+    @Test
     void keepsACodeSpanFromBreakingItsCell() {
         Report report = new Report(new ReportTarget("acme", null, null), new Report.QualityGate("OK", List.of()),
             List.of(), List.of(new Report.Issue("i", "r`1|2", "MINOR", "BUG", "a\nb", 1, "m", null, null)), List.of(),

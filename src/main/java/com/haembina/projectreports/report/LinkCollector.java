@@ -36,7 +36,29 @@ final class LinkCollector {
         JsonObject pullRequest = pullRequest(target);
         String scopeUrl = scopeUrl(target, repositoryUrl, provider, settings, pullRequest);
         return new Report.Links(repositoryName(binding, repositoryUrl), repositoryUrl, scopeUrl, sonarUrl(target),
-            JsonFields.text(pullRequest, "title"));
+            JsonFields.text(pullRequest, "title"), provider, linePattern(provider, repositoryUrl, revision(target)));
+    }
+
+    @Nullable
+    static String linePattern(@Nullable GitProvider provider, @Nullable String repositoryUrl,
+        @Nullable String revision) {
+        if (provider == null || repositoryUrl == null || revision == null) {
+            return null;
+        }
+        return provider.linePattern().replace("{repository}", repositoryUrl).replace("{revision}", encoded(revision));
+    }
+
+    @Nullable
+    private String revision(ReportTarget target) {
+        Map<String, String> params = target.params("project");
+        params.put("ps", "1");
+        for (JsonElement element : JsonFields.array(answer("api/project_analyses/search", params), "analyses")) {
+            String revision = JsonFields.text(element.getAsJsonObject(), "revision");
+            if (revision != null && !revision.isBlank()) {
+                return revision;
+            }
+        }
+        return null;
     }
 
     private JsonObject answer(String path, Map<String, String> params) {

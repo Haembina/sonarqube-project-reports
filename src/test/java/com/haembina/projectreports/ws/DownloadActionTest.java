@@ -82,7 +82,7 @@ class DownloadActionTest {
 
         action.handle(request, response);
 
-        verify(connector, times(4)).call(any());
+        verify(connector, times(5)).call(any());
         verify(response).setHeader("Content-Disposition", "attachment; filename=\"acme-main-reports.zip\"");
         verify(stream).setMediaType("application/zip");
         Map<String, String> files = new LinkedHashMap<>();
@@ -113,8 +113,58 @@ class DownloadActionTest {
 
         action.handle(request, response);
 
-        verify(connector, times(4)).call(any());
+        verify(connector, times(5)).call(any());
         assertThat(written.toString(StandardCharsets.UTF_8)).contains("\"sections\": [\n    \"GATE\"\n  ]");
+    }
+
+    @Test
+    void shapesAMarkdownReportAsACommentForTheAskedPlatform() {
+        when(request.mandatoryParamAsStrings("format")).thenReturn(List.of("markdown"));
+        when(request.paramAsStrings("sections")).thenReturn(List.of("gate", "issues"));
+        when(request.param("layout")).thenReturn("comment");
+        when(request.param("flavor")).thenReturn("gitlab");
+        LocalConnector.LocalResponse gate = answer(200, "{\"projectStatus\":{\"status\":\"OK\"}}");
+        LocalConnector.LocalResponse empty = answer(200, "{\"paging\":{\"total\":0}}");
+        when(connector.call(any())).thenReturn(gate, empty);
+
+        action.handle(request, response);
+
+        verify(response).setHeader("Content-Disposition", "attachment; filename=\"acme-main-report.md\"");
+        assertThat(written.toString(StandardCharsets.UTF_8)).startsWith("### acme · Quality gate: ✓ Passed\n")
+            .contains("<details><summary>Issues (0)</summary>");
+    }
+
+    @Test
+    void writesOneStatusLineAndZipsEachFormatInTheAskedLayout() throws IOException {
+        when(request.mandatoryParamAsStrings("format")).thenReturn(List.of("markdown", "json"));
+        when(request.paramAsStrings("sections")).thenReturn(List.of("gate"));
+        when(request.param("layout")).thenReturn("line");
+        LocalConnector.LocalResponse gate = answer(200, "{\"projectStatus\":{\"status\":\"OK\"}}");
+        when(connector.call(any())).thenReturn(gate);
+
+        action.handle(request, response);
+
+        Map<String, String> files = new LinkedHashMap<>();
+        try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(written.toByteArray()))) {
+            for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                files.put(entry.getName(), new String(zip.readAllBytes(), StandardCharsets.UTF_8));
+            }
+        }
+        assertThat(files.get("acme-main-report.md")).isEqualTo("**acme** · Quality gate: ✓ Passed · "
+            + "[Main branch](https://sonar.test/dashboard?id=acme)\n");
+        assertThat(files.get("acme-main-report.json")).contains("\"status\": \"OK\"");
+    }
+
+    @Test
+    void refusesAnUnknownLayoutOrPlatform() {
+        when(request.param("layout")).thenReturn("slide");
+
+        assertThatThrownBy(() -> action.handle(request, response)).hasMessage("Unknown report layout: slide");
+
+        when(request.param("layout")).thenReturn(null);
+        when(request.param("flavor")).thenReturn("sourcehut");
+
+        assertThatThrownBy(() -> action.handle(request, response)).hasMessage("Unknown git platform: sourcehut");
     }
 
     @Test

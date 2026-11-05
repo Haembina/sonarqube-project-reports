@@ -30,6 +30,13 @@ class ProjectReportsWebServiceTest {
         assertThat(action.param("pullRequest").isRequired()).isFalse();
         assertThat(action.param("format").defaultValue()).isEqualTo("json");
         assertThat(action.param("format").possibleValues()).containsExactly("json", "markdown", "html", "csv", "sarif", "pdf", "epub");
+        assertThat(action.param("layout").defaultValue()).isEqualTo("document");
+        assertThat(action.param("layout").possibleValues()).containsExactly("document", "comment", "line");
+        assertThat(action.param("flavor").defaultValue()).isEqualTo("auto");
+        assertThat(action.param("flavor").possibleValues())
+            .containsExactly("auto", "github", "gitlab", "bitbucket", "azure", "gitea");
+        assertThat(action.param("layout").description()).startsWith("Shape of a Markdown report");
+        assertThat(action.param("flavor").description()).startsWith("Git platform a comment is shaped for");
     }
 
     @Test

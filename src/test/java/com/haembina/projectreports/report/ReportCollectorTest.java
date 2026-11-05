@@ -18,7 +18,7 @@ class ReportCollectorTest {
     private static final ReportTarget TARGET = new ReportTarget("acme", null, "7");
     private static final String EMPTY_SEARCH = "{\"paging\": {\"total\": 0}}";
     private static final List<String> LINK_PATHS = List.of("api/alm_settings/get_binding", "api/project_links/search",
-        "api/settings/values", "api/project_pull_requests/list");
+        "api/settings/values", "api/project_pull_requests/list", "api/project_analyses/search");
 
     private static List<String> reportCalls(FakeConnector connector) {
         return connector.calls().stream().map(call -> call.get("path")).filter(path -> !LINK_PATHS.contains(path)).toList();

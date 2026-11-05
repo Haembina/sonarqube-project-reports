@@ -37,6 +37,11 @@ and ratings, overall and on new code.
 The plugin asks SonarQube's own web services in-process as the requesting user,
 so a report holds only what that user may browse.
 </td>
+<td valign="top">
+<img src="icons/readme/git-merge.svg" width="20" alt=""> <b>Pull request comments</b><br>
+Copy a report as a pull request comment for GitHub, GitLab, Bitbucket, Gitea or
+Azure DevOps, each issue linked to its line.
+</td>
 </tr>
 </table>
 
@@ -66,8 +71,14 @@ flowchart TD
    coverage and duplications, to choose what the report holds.
 6. coverage lists each uncovered line and duplications each duplicated block;
    both need See Source Code permission on the project.
-7. For a git provider the plugin does not recognize, set Branch link and Pull
-   request link in the project's Haembina Project Reports settings.
+7. With format=markdown, pass layout=comment for a pull request comment, or
+   layout=line for one status line.
+8. Pass flavor=github, gitlab, bitbucket, gitea or azure to shape a comment;
+   auto, the default, takes the project's own platform.
+9. The Reports page copies the comment, the status line or the report's link;
+   over plain http it selects the text for Ctrl+C instead.
+10. For a git provider the plugin does not recognize, set Branch link and Pull
+    request link in the project's Haembina Project Reports settings.
 
 ## Commands
 

@@ -37,6 +37,17 @@ final class SampleReport {
             sourceHidden);
     }
 
+    static Report linked(Report report, Report.Links links) {
+        return new Report(report.target(), report.sections(), report.qualityGate(), report.measures(), report.issues(),
+            report.hotspots(), report.files(), report.coverage(), report.duplications(), report.sourceHidden(), links);
+    }
+
+    static Report.Links githubLinks() {
+        return new Report.Links("Acme/app", "https://github.com/Acme/app",
+            "https://github.com/Acme/app/tree/feature/x", "https://sonar.test/dashboard?id=acme&branch=feature/x", null,
+            GitProvider.GITHUB, "https://github.com/Acme/app/blob/abc/{path}#L{line}");
+    }
+
     static Report empty() {
         return new Report(new ReportTarget("acme", null, "7"), new Report.QualityGate(null, List.of()), List.of(),
             List.of(), List.of(), List.of());

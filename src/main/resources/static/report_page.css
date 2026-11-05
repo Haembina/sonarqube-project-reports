@@ -224,6 +224,34 @@ div:has(> .haembina-reports) {
   color: var(--echoes-color-text-subtle);
 }
 
+.haembina-reports__picker--platform {
+  flex: 0 1 14rem;
+}
+
+.haembina-reports__copy-box {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 8rem;
+  margin-top: var(--echoes-dimension-space-150);
+  padding: var(--echoes-dimension-space-100);
+  border: var(--echoes-border-width-default) solid var(--echoes-color-border-bold);
+  border-radius: var(--echoes-border-radius-200);
+  background: var(--echoes-color-surface-default);
+  color: var(--echoes-color-text-default);
+  font: var(--echoes-typography-text-small-regular);
+  font-family: ui-monospace, monospace;
+  resize: vertical;
+}
+
+.haembina-reports__copy-box[hidden] {
+  display: none;
+}
+
+.haembina-reports__copy-box:focus-visible {
+  outline: var(--echoes-focus-border-width-default) solid var(--echoes-color-focus-default);
+  outline-offset: var(--echoes-focus-border-offset-default);
+}
+
 .haembina-reports__status--error {
   color: var(--echoes-color-text-danger);
 }
