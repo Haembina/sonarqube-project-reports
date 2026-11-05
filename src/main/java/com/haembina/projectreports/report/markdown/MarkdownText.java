@@ -1,6 +1,7 @@
-package com.haembina.projectreports.report;
+package com.haembina.projectreports.report.markdown;
 
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.Report;
 import com.haembina.projectreports.report.view.ReportView;
 import java.util.List;
 import javax.annotation.Nullable;

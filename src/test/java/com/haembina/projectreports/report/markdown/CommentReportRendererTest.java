@@ -1,7 +1,12 @@
-package com.haembina.projectreports.report;
+package com.haembina.projectreports.report.markdown;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.haembina.projectreports.report.GitProvider;
+import com.haembina.projectreports.report.Report;
+import com.haembina.projectreports.report.ReportSection;
+import com.haembina.projectreports.report.ReportTarget;
+import com.haembina.projectreports.report.SampleReport;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.List;

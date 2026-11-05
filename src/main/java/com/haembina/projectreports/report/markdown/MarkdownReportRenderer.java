@@ -1,14 +1,17 @@
-package com.haembina.projectreports.report;
+package com.haembina.projectreports.report.markdown;
 
-import static com.haembina.projectreports.report.MarkdownText.cell;
-import static com.haembina.projectreports.report.MarkdownText.status;
+import static com.haembina.projectreports.report.markdown.MarkdownText.cell;
+import static com.haembina.projectreports.report.markdown.MarkdownText.status;
 
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.Report;
+import com.haembina.projectreports.report.ReportRenderer;
+import com.haembina.projectreports.report.ReportSection;
 import com.haembina.projectreports.report.document.ReportAssets;
 import com.haembina.projectreports.report.view.ReportView;
 import java.nio.charset.StandardCharsets;
 
-final class MarkdownReportRenderer implements ReportRenderer {
+public final class MarkdownReportRenderer implements ReportRenderer {
 
     private static final int MARK_SIZE = 20;
     private static final int ICON_SIZE = 24;

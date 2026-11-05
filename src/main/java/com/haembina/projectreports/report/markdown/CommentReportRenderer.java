@@ -1,23 +1,27 @@
-package com.haembina.projectreports.report;
+package com.haembina.projectreports.report.markdown;
 
-import static com.haembina.projectreports.report.MarkdownText.cell;
-import static com.haembina.projectreports.report.MarkdownText.status;
+import static com.haembina.projectreports.report.markdown.MarkdownText.cell;
+import static com.haembina.projectreports.report.markdown.MarkdownText.status;
 
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.GitProvider;
+import com.haembina.projectreports.report.Report;
+import com.haembina.projectreports.report.ReportRenderer;
+import com.haembina.projectreports.report.ReportSection;
 import com.haembina.projectreports.report.view.ReportView;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-final class CommentReportRenderer implements ReportRenderer {
+public final class CommentReportRenderer implements ReportRenderer {
 
     static final int LIMIT = 65_536;
     private static final int RESERVE = 4_096;
 
     private final Optional<GitProvider> flavor;
 
-    CommentReportRenderer(Optional<GitProvider> flavor) {
+    public CommentReportRenderer(Optional<GitProvider> flavor) {
         this.flavor = flavor;
     }
 

@@ -1,16 +1,19 @@
-package com.haembina.projectreports.report;
+package com.haembina.projectreports.report.markdown;
 
-import static com.haembina.projectreports.report.MarkdownText.cell;
-import static com.haembina.projectreports.report.MarkdownText.status;
+import static com.haembina.projectreports.report.markdown.MarkdownText.cell;
+import static com.haembina.projectreports.report.markdown.MarkdownText.status;
 
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.Report;
+import com.haembina.projectreports.report.ReportRenderer;
+import com.haembina.projectreports.report.ReportSection;
 import com.haembina.projectreports.report.view.MetricText;
 import com.haembina.projectreports.report.view.ReportView;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-final class StatusLineRenderer implements ReportRenderer {
+public final class StatusLineRenderer implements ReportRenderer {
 
     private static final String NEW_COVERAGE = "new_coverage";
 

@@ -3,6 +3,7 @@ package com.haembina.projectreports.report;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.haembina.projectreports.report.markdown.MarkdownReportRenderer;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.List;

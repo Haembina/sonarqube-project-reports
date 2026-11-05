@@ -3,6 +3,9 @@ package com.haembina.projectreports.report;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.haembina.projectreports.report.markdown.CommentReportRenderer;
+import com.haembina.projectreports.report.markdown.MarkdownReportRenderer;
+import com.haembina.projectreports.report.markdown.StatusLineRenderer;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 

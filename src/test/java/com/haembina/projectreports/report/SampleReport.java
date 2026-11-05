@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-final class SampleReport {
+public final class SampleReport {
 
     private SampleReport() {
     }
 
-    static Report full() {
+    public static Report full() {
         return new Report(new ReportTarget("acme", "feature/x", null),
             new Report.QualityGate("ERROR", List.of(
                 new Report.Condition("new_coverage", "LT", "80", "61.5", "ERROR"))),
@@ -27,7 +27,7 @@ final class SampleReport {
                 Map.of("coverage", "50.0", "ncloc", "12", "violations", "2"))));
     }
 
-    static Report detailed(Set<ReportSection> sections, boolean sourceHidden) {
+    public static Report detailed(Set<ReportSection> sections, boolean sourceHidden) {
         return new Report(new ReportTarget("acme", null, null), sections, new Report.QualityGate("OK", List.of()),
             List.of(), List.of(), List.of(), List.of(),
             sourceHidden ? List.of() : List.of(new Report.LineCoverage("src/a.js", List.of(2, 3, 4, 9),
@@ -37,18 +37,18 @@ final class SampleReport {
             sourceHidden);
     }
 
-    static Report linked(Report report, Report.Links links) {
+    public static Report linked(Report report, Report.Links links) {
         return new Report(report.target(), report.sections(), report.qualityGate(), report.measures(), report.issues(),
             report.hotspots(), report.files(), report.coverage(), report.duplications(), report.sourceHidden(), links);
     }
 
-    static Report.Links githubLinks() {
+    public static Report.Links githubLinks() {
         return new Report.Links("Acme/app", "https://github.com/Acme/app",
             "https://github.com/Acme/app/tree/feature/x", "https://sonar.test/dashboard?id=acme&branch=feature/x", null,
             GitProvider.GITHUB, "https://github.com/Acme/app/blob/abc/{path}#L{line}");
     }
 
-    static Report empty() {
+    public static Report empty() {
         return new Report(new ReportTarget("acme", null, "7"), new Report.QualityGate(null, List.of()), List.of(),
             List.of(), List.of(), List.of());
     }

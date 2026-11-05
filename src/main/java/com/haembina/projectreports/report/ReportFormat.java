@@ -1,6 +1,9 @@
 package com.haembina.projectreports.report;
 
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.markdown.CommentReportRenderer;
+import com.haembina.projectreports.report.markdown.MarkdownReportRenderer;
+import com.haembina.projectreports.report.markdown.StatusLineRenderer;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;

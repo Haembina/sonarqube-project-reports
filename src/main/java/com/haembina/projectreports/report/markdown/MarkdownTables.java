@@ -1,11 +1,12 @@
-package com.haembina.projectreports.report;
+package com.haembina.projectreports.report.markdown;
 
-import static com.haembina.projectreports.report.MarkdownText.cell;
-import static com.haembina.projectreports.report.MarkdownText.code;
-import static com.haembina.projectreports.report.MarkdownText.linkedCode;
-import static com.haembina.projectreports.report.MarkdownText.status;
+import static com.haembina.projectreports.report.markdown.MarkdownText.cell;
+import static com.haembina.projectreports.report.markdown.MarkdownText.code;
+import static com.haembina.projectreports.report.markdown.MarkdownText.linkedCode;
+import static com.haembina.projectreports.report.markdown.MarkdownText.status;
 
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.ReportSection;
 import com.haembina.projectreports.report.view.ReportIcons;
 import com.haembina.projectreports.report.view.ReportView;
 import java.util.ArrayList;
