@@ -225,7 +225,7 @@ div:has(> .haembina-reports) {
 }
 
 .haembina-reports__picker--platform {
-  flex: 0 1 14rem;
+  flex: 0 1 12rem;
 }
 
 .haembina-reports__copy-box {
