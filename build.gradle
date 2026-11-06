@@ -11,9 +11,14 @@ group = 'com.haembina.projectreports'
 version = new groovy.json.JsonSlurper().parse(file('package.json')).version
 
 def pluginApiVersion = '14.1.0.5543'
+def mockitoVersion = '5.24.0'
 
 repositories {
     mavenCentral()
+}
+
+configurations {
+    mockitoAgent
 }
 
 java {
@@ -29,7 +34,10 @@ dependencies {
     testImplementation("org.sonarsource.api.plugin:sonar-plugin-api:${pluginApiVersion}")
     testImplementation(platform('org.junit:junit-bom:6.1.3'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    testImplementation('org.mockito:mockito-core:5.24.0')
+    testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+    mockitoAgent("org.mockito:mockito-core:${mockitoVersion}") {
+        transitive = false
+    }
     testImplementation('org.assertj:assertj-core:3.27.7')
     testImplementation('com.networknt:json-schema-validator:3.0.9')
     testRuntimeOnly('org.junit.platform:junit-platform-launcher')
@@ -87,6 +95,7 @@ if (gradle.startParameter.taskNames.any { task -> task.tokenize(':').last() == '
 
 test {
     useJUnitPlatform()
+    jvmArgs("-javaagent:${configurations.mockitoAgent.asPath}")
     testLogging {
         events 'failed'
     }
