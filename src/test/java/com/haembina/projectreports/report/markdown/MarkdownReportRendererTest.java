@@ -48,12 +48,14 @@ class MarkdownReportRendererTest {
                 """.replace("{assets}", ASSETS))
             .contains("| Lines of code | — | — |\n| Coverage | 72.4 % | — |\n")
             .contains(" Issues (3)\n", " Security hotspots (1)\n", " Files (1)\n")
-            .contains("| Blocker | Code smell | `javascript:S3516` | `src/app.js:2` | Refactor \\| this &lt;function&gt; |")
+            .contains("| Blocker | Code smell | `javascript:S3516` | `src/\u200Bapp.js:2` "
+                + "| Refactor \\| this &lt;function&gt; |")
             .contains("| Info | Code smell | `javascript:S1135` | `—` | =HYPERLINK(\"x\") |")
-            .contains("| `src/b.js` | line break |")
-            .contains("| Medium | Weak-cryptography | `javascript:S2245` | `src/app.js:5` | Make sure \"random\" is safe "
+            .contains("| `src/\u200Bb.js` | line break |")
+            .contains("| Medium | Weak-cryptography | `javascript:S2245` | `src/\u200Bapp.js:5` "
+                + "| Make sure \"random\" is safe "
                 + "| To review |")
-            .contains("| `src/app.js` | 12 | 50 % | — | — | 2 |");
+            .contains("| `src/\u200Bapp.js` | 12 | 50 % | — | — | 2 |");
     }
 
     @Test
@@ -89,14 +91,14 @@ class MarkdownReportRendererTest {
 
                 | File | Uncovered lines | Partly covered |
                 | --- | --- | --- |
-                | `src/a.js` | 2–4, 9 | 6 (1 of 2 conditions) |
+                | `src/\u200Ba.js` | 2–4, 9 | 6 (1 of 2 conditions) |
                 """)
             .contains("""
                  Duplicated blocks (1)
 
                 | File | Lines | Also in |
                 | --- | --- | --- |
-                | `src/a.js` | 10–24 | src/b.js 2–16 |
+                | `src/\u200Ba.js` | 10–24 | src/\u200Bb.js 2–16 |
                 """);
     }
 
@@ -133,9 +135,9 @@ class MarkdownReportRendererTest {
     @Test
     void linksEachLocationToItsLineOnTheGitProvider() {
         assertThat(render(SampleReport.linked(SampleReport.full(), SampleReport.githubLinks())))
-            .contains("| [`src/app.js:2`](https://github.com/Acme/app/blob/abc/src/app.js#L2) |")
-            .contains("| [`src/app.js:5`](https://github.com/Acme/app/blob/abc/src/app.js#L5) |")
-            .contains("| `—` |", "| `src/b.js` |");
+            .contains("| [`src/\u200Bapp.js:2`](https://github.com/Acme/app/blob/abc/src/app.js#L2) |")
+            .contains("| [`src/\u200Bapp.js:5`](https://github.com/Acme/app/blob/abc/src/app.js#L5) |")
+            .contains("| `—` |", "| `src/\u200Bb.js` |");
     }
 
     @Test

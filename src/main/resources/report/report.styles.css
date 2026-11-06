@@ -131,10 +131,12 @@ body {
   padding: 0.35rem 0.5rem;
   border-bottom: 1px solid var(--report-line);
   vertical-align: top;
-  overflow-wrap: break-word;
 }
 
-.report-table__head--number,
+.report-table__head--number {
+  text-align: right;
+}
+
 .report-table__cell--number {
   text-align: right;
   white-space: nowrap;
@@ -164,7 +166,6 @@ body {
   display: block;
   margin-top: 0.15rem;
   color: var(--report-muted);
-  overflow-wrap: anywhere;
 }
 
 .report-badge {

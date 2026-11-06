@@ -12,6 +12,7 @@ public final class ReportAssets {
     public static final String ICON = "plugin-icon.png";
     public static final String TOKENS = "report.tokens.css";
     public static final String STYLES = "report.styles.css";
+    public static final String SCREEN_STYLES = "report-screen.styles.css";
 
     private static final String WOFF2 = "font/woff2";
 
