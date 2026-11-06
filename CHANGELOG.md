@@ -2,6 +2,17 @@
 
 Written by `@haembina/release`, never by hand (rule D9).
 
+## 0.4.0 (2026-11-06)
+
+### Features
+
+* copy a report as a pull request comment for its git platform, a status line or a link #25
+
+### Bug Fixes
+
+* keep the three copy buttons on one line beside the platform picker #25
+* update the libraries it is built on
+
 ## 0.3.1 (2026-10-30)
 
 ### Bug Fixes
