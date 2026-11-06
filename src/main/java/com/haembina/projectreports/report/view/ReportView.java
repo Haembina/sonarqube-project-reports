@@ -69,11 +69,21 @@ public record ReportView(String project, String scope, Gate gate, List<Condition
     }
 
     public record Issue(String severity, String severityIcon, String type, String typeIcon, String rule,
-        String location, String message) {
+        String location, String message, @Nullable String locationUrl) {
+
+        public Issue(String severity, String severityIcon, String type, String typeIcon, String rule, String location,
+            String message) {
+            this(severity, severityIcon, type, typeIcon, rule, location, message, null);
+        }
     }
 
     public record Hotspot(String probability, String category, String rule, String location, String message,
-        String status) {
+        String status, @Nullable String locationUrl) {
+
+        public Hotspot(String probability, String category, String rule, String location, String message,
+            String status) {
+            this(probability, category, rule, location, message, status, null);
+        }
     }
 
     public record File(String path, String lines, String coverage, String uncovered, String duplicated,
@@ -94,11 +104,13 @@ public record ReportView(String project, String scope, Gate gate, List<Condition
             report.issues().stream().map(issue -> new Issue(MetricText.words(issue.severity()),
                 ReportIcons.forSeverity(issue.severity()),
                 MetricText.words(issue.type()), ReportIcons.forType(issue.type()), issue.rule(),
-                location(issue.file(), issue.line()), issue.message()))
+                location(issue.file(), issue.line()), issue.message(),
+                report.links().lineUrl(issue.file(), issue.line())))
                 .toList(),
             report.hotspots().stream().map(hotspot -> new Hotspot(MetricText.words(hotspot.vulnerabilityProbability()),
                 MetricText.words(hotspot.securityCategory()), hotspot.rule(), location(hotspot.file(), hotspot.line()),
-                hotspot.message(), MetricText.words(hotspot.status())))
+                hotspot.message(), MetricText.words(hotspot.status()),
+                report.links().lineUrl(hotspot.file(), hotspot.line())))
                 .toList(),
             report.files().stream().map(file -> new File(file.path(),
                 MetricText.value("ncloc", file.measure("ncloc")), MetricText.value("coverage", file.measure("coverage")),

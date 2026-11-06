@@ -1,7 +1,11 @@
-package com.haembina.projectreports.report;
+package com.haembina.projectreports.report.markdown;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.haembina.projectreports.report.Report;
+import com.haembina.projectreports.report.ReportSection;
+import com.haembina.projectreports.report.ReportTarget;
+import com.haembina.projectreports.report.SampleReport;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.List;
@@ -124,6 +128,14 @@ class MarkdownReportRendererTest {
             [Pull request 7 – Add reports](https://git.acme.io/a%20b/(7%29) · \
             [Open in SonarQube](https://sonar.test/dashboard?id=acme&pullRequest=7) · Quality gate: **✓ Passed**
             """);
+    }
+
+    @Test
+    void linksEachLocationToItsLineOnTheGitProvider() {
+        assertThat(render(SampleReport.linked(SampleReport.full(), SampleReport.githubLinks())))
+            .contains("| [`src/app.js:2`](https://github.com/Acme/app/blob/abc/src/app.js#L2) |")
+            .contains("| [`src/app.js:5`](https://github.com/Acme/app/blob/abc/src/app.js#L5) |")
+            .contains("| `—` |", "| `src/b.js` |");
     }
 
     @Test

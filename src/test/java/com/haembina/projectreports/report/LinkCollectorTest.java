@@ -5,19 +5,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.haembina.projectreports.api.FakeConnector;
+import com.haembina.projectreports.api.LocalApi;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class LinkCollectorTest {
 
     private static final String NO_LINKS = "{\"links\": []}";
+    private static final String ANALYSES = "{\"analyses\": [{\"revision\": \"abc123\"}]}";
 
     private static Report.Links collect(ReportTarget target, String binding, String links, String settings,
         String pullRequests) {
+        return collect(target, binding, links, settings, pullRequests, ANALYSES);
+    }
+
+    private static Report.Links collect(ReportTarget target, String binding, String links, String settings,
+        String pullRequests, String analyses) {
         return new LinkCollector(FakeConnector.api((path, params) -> switch (path) {
             case "api/alm_settings/get_binding" -> binding;
             case "api/project_links/search" -> links;
             case "api/settings/values" -> settings;
+            case "api/project_analyses/search" -> analyses;
             default -> pullRequests;
         }), "https://sonar.test/").collect(target);
     }
@@ -33,7 +41,43 @@ class LinkCollectorTest {
             "{\"settings\": []}", "{\"pullRequests\": [{\"key\": \"6\"}, {\"key\": \"7\", \"title\": \"Add reports\"}]}");
 
         assertThat(links).isEqualTo(new Report.Links("Acme/app", "https://github.com/Acme/app",
-            "https://github.com/Acme/app/pull/7", "https://sonar.test/dashboard?id=acme&pullRequest=7", "Add reports"));
+            "https://github.com/Acme/app/pull/7", "https://sonar.test/dashboard?id=acme&pullRequest=7", "Add reports",
+            GitProvider.GITHUB, "https://github.com/Acme/app/blob/abc123/{path}#L{line}"));
+        assertThat(links.lineUrl("src/my app.js", 12))
+            .isEqualTo("https://github.com/Acme/app/blob/abc123/src/my%20app.js#L12");
+    }
+
+    @Test
+    void asksForTheRevisionOfTheScopesLastAnalysis() {
+        FakeConnector connector = new FakeConnector((path, params) -> path.equals("api/project_analyses/search")
+            ? ANALYSES : "{}");
+        new LinkCollector(new LocalApi(connector), "https://sonar.test")
+            .collect(new ReportTarget("acme", "dev", null));
+
+        assertThat(connector.calls()).contains(Map.of("path", "api/project_analyses/search", "project", "acme",
+            "branch", "dev", "ps", "1"));
+    }
+
+    @Test
+    void linksNoLineWithoutARevisionOrAPlace() {
+        String binding = "{\"alm\": \"github\", \"repository\": \"Acme/app\", \"url\": \"https://api.github.com/\"}";
+        ReportTarget main = new ReportTarget("acme", null, null);
+
+        assertThat(collect(main, binding, NO_LINKS, "{}", "{}", "{\"analyses\": []}").linePattern()).isNull();
+        assertThat(collect(main, binding, NO_LINKS, "{}", "{}", "{\"analyses\": [{\"revision\": \" \"}]}")
+            .linePattern()).isNull();
+        assertThat(collect(main, binding, NO_LINKS, "{}", "{}", "{\"analyses\": [{}]}").linePattern()).isNull();
+        assertThat(collect(main, binding, NO_LINKS, "{}", "{}", FakeConnector.FORBIDDEN).linePattern()).isNull();
+        Report.Links links = collect(main, binding, NO_LINKS, "{}", "{}");
+        assertThat(links.lineUrl(null, 3)).isNull();
+        assertThat(links.lineUrl("a.js", null)).isNull();
+        assertThat(links.lineUrl("a.js", 0)).isNull();
+        assertThat(links.lineUrl("a.js", 1)).endsWith("/a.js#L1");
+        assertThat(Report.Links.NONE.lineUrl("a.js", 1)).isNull();
+        assertThat(LinkCollector.linePattern(GitProvider.GITEA, null, "abc")).isNull();
+        assertThat(LinkCollector.linePattern(null, "https://git.acme.io/a", "abc")).isNull();
+        assertThat(LinkCollector.linePattern(GitProvider.GITLAB, "https://gitlab.com/a", "v 1"))
+            .isEqualTo("https://gitlab.com/a/-/blob/v%201/{path}#L{line}");
     }
 
     @Test
@@ -44,7 +88,8 @@ class LinkCollectorTest {
             "{\"pullRequests\": [{\"key\": \"7\", \"url\": \"https://gitea.acme.io/acme/app/pulls/7\"}]}");
 
         assertThat(links).isEqualTo(new Report.Links("acme/app", "https://gitea.acme.io/acme/app",
-            "https://gitea.acme.io/acme/app/pulls/7", "https://sonar.test/dashboard?id=acme&pullRequest=7", null));
+            "https://gitea.acme.io/acme/app/pulls/7", "https://sonar.test/dashboard?id=acme&pullRequest=7", null,
+            GitProvider.GITEA, "https://gitea.acme.io/acme/app/src/commit/abc123/{path}#L{line}"));
     }
 
     @Test
