@@ -56,6 +56,12 @@ class PdfReportRendererTest {
     }
 
     @Test
+    void leavesTheScreenOnlyRulesOutOfThePrint() {
+        assertThat(PdfReportRenderer.PRINT.screenStyles()).isEmpty();
+        assertThat(HtmlReportRenderer.INLINE.screenStyles()).contains("overflow-x: auto;");
+    }
+
+    @Test
     void passesOnAWriteThatFails() {
         OutputStream full = new OutputStream() {
             @Override

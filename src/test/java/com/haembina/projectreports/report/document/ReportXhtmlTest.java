@@ -83,9 +83,32 @@ class ReportXhtmlTest {
             .contains("report-table__cell--iconed report-icon--radioactive-row\">Code smell</td>")
             .contains("<td class=\"report-table__cell report-table__cell--finding\">Refactor &quot;this&quot;"
                 + "<span class=\"report-table__where\"><span class=\"report-table__code\">js:S1</span> · "
-                + "<span class=\"report-table__code\">src/a.js:2</span></span></td>")
+                + "<span class=\"report-table__code\">src/<wbr/>a.js:2</span></span></td>")
             .contains("<td class=\"report-table__cell report-table__cell--label\">To review</td>")
-            .contains("<td class=\"report-table__cell\"><span class=\"report-table__code\">src/a.js</span></td>");
+            .contains("<td class=\"report-table__cell\"><span class=\"report-table__code\">src/<wbr/>a.js"
+                + "</span></td>");
+    }
+
+    @Test
+    void letsAPathBreakAfterEachSlashAndAWideTableScrollInsideItsFrame() {
+        String html = ReportXhtml.document(full(), EMBEDDING);
+
+        assertThat(ReportXhtml.breakable("src/main/<a>.js")).isEqualTo("src/<wbr/>main/<wbr/>&lt;a&gt;.js");
+        assertThat(html).contains("<style media=\"screen\">\n.report-table__frame {\n  overflow-x: auto;\n}")
+            .contains("<div class=\"report-table__frame\"><table class=\"report-table report-table--files-section\">")
+            .contains("</tbody>\n</table></div>\n");
+    }
+
+    @Test
+    void labelsEachFileMeasureSoAPhoneShowsTheFileAsACard() {
+        String html = ReportXhtml.document(full(), EMBEDDING);
+
+        assertThat(html).contains("<td class=\"report-table__cell report-table__cell--number\" "
+                + "data-label=\"Lines of code\">12</td>")
+            .contains("data-label=\"Coverage\">50 %</td>", "data-label=\"Uncovered lines\">6</td>",
+                "data-label=\"Duplicated lines (%)\">—</td>", "data-label=\"Open issues\">2</td>");
+        assertThat(EMBEDDING.screenStyles()).contains("@media (max-width: 37.49em)",
+            ".report-table--files-section .report-table__cell[data-label]::before {\n    content: attr(data-label);");
     }
 
     @Test
@@ -142,7 +165,8 @@ class ReportXhtmlTest {
             .contains("<td class=\"report-table__cell\">2–4, 9</td><td class=\"report-table__cell\">"
                 + "6 (1 of 2 conditions)</td>")
             .contains("<span class=\"report-icon report-icon--copy-section\"></span>Duplicated blocks (1)")
-            .contains("<td class=\"report-table__cell\">10–24</td><td class=\"report-table__cell\">src/b.js 2–16</td>");
+            .contains("<td class=\"report-table__cell\">10–24</td><td class=\"report-table__cell\">"
+                + "src/<wbr/>b.js 2–16</td>");
     }
 
     @Test

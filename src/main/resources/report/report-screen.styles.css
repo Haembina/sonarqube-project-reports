@@ -1,0 +1,54 @@
+.report-table__frame {
+  overflow-x: auto;
+}
+
+.report-table__cell {
+  overflow-wrap: break-word;
+}
+
+.report-table__where {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 37.49em) {
+  .report-table--files-section,
+  .report-table--files-section tbody,
+  .report-table--files-section tr,
+  .report-table--files-section td {
+    display: block;
+  }
+
+  .report-table--files-section thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .report-table--files-section .report-table__cell:not(:last-child) {
+    border-bottom: 0;
+  }
+
+  .report-table--files-section .report-table__cell:first-child {
+    padding-bottom: 0.15rem;
+  }
+
+  .report-table--files-section .report-table__cell[data-label] {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+  }
+
+  .report-table--files-section .report-table__cell[data-label]::before {
+    content: attr(data-label);
+    text-align: left;
+  }
+
+  .report-table--files-section .report-table__cell:last-child {
+    padding-bottom: 0.45rem;
+  }
+}

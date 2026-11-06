@@ -18,12 +18,17 @@ public final class ReportXhtml {
         String fontFaces();
 
         String imageSource(String asset);
+
+        default String screenStyles() {
+            return ReportAssets.text(ReportAssets.SCREEN_STYLES);
+        }
     }
 
     private static final String CELL = "<td class=\"report-table__cell\">";
     private static final String CELL_END = "</td>";
     private static final String SPAN_END = "</span>";
     private static final String NUMBER = "number";
+    private static final String SLASH = "/";
     private static final String RATINGS = "ABCDE";
     private static final String SEPARATOR = " · ";
     private static final List<String> STATUS_TONES = List.of("pass", "fail", "none");
@@ -45,6 +50,7 @@ public final class ReportXhtml {
             .append("<title>").append(escape(view.project() + " – " + view.scope())).append("</title>\n")
             .append("<style>\n").append(embedding.fontFaces()).append(ReportStyles.resolved())
             .append(iconRules(embedding)).append("</style>\n")
+            .append("<style media=\"screen\">\n").append(embedding.screenStyles()).append("</style>\n")
             .append("</head>\n<body>\n<main class=\"report\">\n");
         html.append("<p class=\"report__source\"><a class=\"report__link\" href=\"").append(ReportView.PLUGIN_URL)
             .append("\"><img class=\"report__source-icon\" src=\"").append(embedding.imageSource(ReportAssets.ICON))
@@ -123,8 +129,11 @@ public final class ReportXhtml {
                 List.of(head(Message.COLUMN_FILE), number(Message.METRIC_NCLOC), number(Message.METRIC_COVERAGE),
                     number(Message.COLUMN_UNCOVERED_LINES), number(Message.METRIC_DUPLICATED_LINES_DENSITY),
                     number(Message.COLUMN_OPEN_ISSUES)), view.files(),
-                file -> List.of(code(file.path()), numeric(file.lines()), numeric(file.coverage()),
-                    numeric(file.uncovered()), numeric(file.duplicated()), numeric(file.issues())));
+                file -> List.of(code(file.path()), labelled(file.lines(), Message.METRIC_NCLOC),
+                    labelled(file.coverage(), Message.METRIC_COVERAGE),
+                    labelled(file.uncovered(), Message.COLUMN_UNCOVERED_LINES),
+                    labelled(file.duplicated(), Message.METRIC_DUPLICATED_LINES_DENSITY),
+                    labelled(file.issues(), Message.COLUMN_OPEN_ISSUES)));
         }
         if (view.has(ReportSection.COVERAGE)) {
             section(html, ReportIcons.COVERAGE_LINES, Message.HEADING_COVERAGE.text(view.coverage().size()),
@@ -138,7 +147,7 @@ public final class ReportXhtml {
                 view.sourceHidden() ? Message.REPORT_SOURCE_HIDDEN.text() : Message.EMPTY_DUPLICATIONS.text(),
                 List.of(head(Message.COLUMN_FILE), head(Message.COLUMN_LINES), head(Message.COLUMN_ALSO_IN)),
                 view.duplications(),
-                block -> List.of(code(block.path()), cell(block.lines()), cell(block.copies())));
+                block -> List.of(code(block.path()), cell(block.lines()), paths(block.copies())));
         }
     }
 
@@ -162,12 +171,14 @@ public final class ReportXhtml {
             html.append("<p class=\"report__empty\">").append(escape(empty)).append("</p>\n");
             return;
         }
-        html.append("<table class=\"report-table\">\n<thead><tr>").append(String.join("", heads))
+        html.append("<div class=\"report-table__frame\"><table class=\"report-table report-table--").append(icon)
+            .append("\">\n<thead><tr>")
+            .append(String.join("", heads))
             .append("</tr></thead>\n<tbody>\n");
         for (T row : rows) {
             html.append("<tr>").append(String.join("", cells.apply(row))).append("</tr>\n");
         }
-        html.append("</tbody>\n</table>\n");
+        html.append("</tbody>\n</table></div>\n");
     }
 
     private static String head(Message text) {
@@ -186,6 +197,11 @@ public final class ReportXhtml {
         return "<td class=\"report-table__cell report-table__cell--" + NUMBER + "\">" + escape(text) + CELL_END;
     }
 
+    private static String labelled(String text, Message label) {
+        return "<td class=\"report-table__cell report-table__cell--" + NUMBER + "\" data-label=\""
+            + escape(label.text()) + "\">" + escape(text) + CELL_END;
+    }
+
     private static String label(String text, String icon) {
         String iconed = icon.isEmpty() ? "" : " report-table__cell--iconed report-icon--" + icon;
         return "<td class=\"report-table__cell report-table__cell--label" + iconed + "\">" + escape(text) + CELL_END;
@@ -196,7 +212,15 @@ public final class ReportXhtml {
     }
 
     private static String codeText(String text) {
-        return "<span class=\"report-table__code\">" + escape(text) + SPAN_END;
+        return "<span class=\"report-table__code\">" + breakable(text) + SPAN_END;
+    }
+
+    private static String paths(String text) {
+        return CELL + breakable(text) + CELL_END;
+    }
+
+    static String breakable(String text) {
+        return escape(text).replace(SLASH, SLASH + "<wbr/>");
     }
 
     private static String finding(String message, String rule, String location) {
