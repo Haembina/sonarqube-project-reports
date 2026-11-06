@@ -1,7 +1,9 @@
 package com.haembina.projectreports.ws;
 
 import com.haembina.projectreports.l10n.Message;
+import com.haembina.projectreports.report.GitProvider;
 import com.haembina.projectreports.report.ReportFormat;
+import com.haembina.projectreports.report.ReportLayout;
 import com.haembina.projectreports.report.ReportSection;
 import java.util.Arrays;
 import org.sonar.api.platform.Server;
@@ -50,6 +52,16 @@ public final class ProjectReportsWebService implements WebService {
             .setDescription(Message.API_SECTIONS.text())
             .setPossibleValues(Arrays.stream(ReportSection.values()).map(ReportSection::key).toList())
             .setExampleValue("gate,measures,coverage");
+        action.createParam(DownloadAction.LAYOUT)
+            .setDescription(Message.API_LAYOUT.text())
+            .setSince("0.4")
+            .setPossibleValues(ReportLayout.keys())
+            .setDefaultValue(ReportLayout.DOCUMENT.key());
+        action.createParam(DownloadAction.FLAVOR)
+            .setDescription(Message.API_FLAVOR.text())
+            .setSince("0.4")
+            .setPossibleValues(GitProvider.flavors())
+            .setDefaultValue(GitProvider.AUTO);
         controller.done();
     }
 }

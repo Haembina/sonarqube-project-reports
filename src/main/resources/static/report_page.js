@@ -2,6 +2,9 @@ const PLUGIN = 'haembinaprojectreports';
 const BLOCK = 'haembina-reports';
 const FORMATS = ['json', 'markdown', 'html', 'pdf', 'epub', 'csv', 'sarif'];
 const SECTIONS = ['gate', 'measures', 'issues', 'hotspots', 'files', 'coverage', 'duplications'];
+const PLATFORMS = ['auto', 'github', 'gitlab', 'bitbucket', 'gitea', 'azure'];
+const COPIES = { 'copy-comment': 'comment', 'copy-line': 'line', 'copy-link': 'link' };
+const COPY_ICONS = { comment: 'comment', line: 'gate', link: 'link' };
 const FILE_NAME = /filename="([^"]+)"/u;
 const ICONS = {
   json: ['M7 4a2 2 0 0 0 -2 2v3a2 3 0 0 1 -2 3a2 3 0 0 1 2 3v3a2 2 0 0 0 2 2',
@@ -24,6 +27,10 @@ const ICONS = {
     'M13 11l-1 0', 'M11 13l-1 0', 'M13 15l-1 0'],
   download: ['M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2', 'M7 11l5 5l5 -5', 'M12 4l0 12'],
   chevron: ['M6 9l6 6l6 -6'],
+  comment: ['M8 9h8', 'M8 13h6',
+    'M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z'],
+  link: ['M9 15l6 -6', 'M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464',
+    'M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463'],
   gate: ['M11.46 20.846a12 12 0 0 1 -7.96 -14.846a12 12 0 0 0 8.5 -3a12 12 0 0 0 8.5 3a12 12 0 0 1 -.09 7.06',
     'M15 19l2 2l4 -4'],
   measures: ['M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -6',
@@ -118,7 +125,27 @@ function form(state, text) {
     + `<button type="submit" name="as" value="together" class="${BLOCK}__button">${togetherLabel(1, text)}</button>`
     + `<button type="submit" name="as" value="each" class="${BLOCK}__button ${BLOCK}__button--secondary" hidden>`
     + `${icon('download', 'button')}${escape(text('page.download_each'))}</button>`
-    + `<p class="${BLOCK}__status" role="status" aria-live="polite"></p></div></form>`;
+    + `<p class="${BLOCK}__status" role="status" aria-live="polite"></p></div>${copyFields(text)}</form>`;
+}
+
+function copyFields(text) {
+  const platforms = PLATFORMS.map((platform) => {
+    const name = escape(text(`page.platform.${platform}`));
+    return `<option value="${platform}">${name}</option>`;
+  }).join('');
+  const buttons = Object.entries(COPIES).map(([value, kind]) => {
+    const name = escape(text(`page.copy_${kind}`));
+    return `<button type="submit" name="as" value="${value}" class="${BLOCK}__button ${BLOCK}__button--secondary">`
+      + `${icon(COPY_ICONS[kind], 'button')}${name}</button>`;
+  }).join('');
+  return `<fieldset class="${BLOCK}__fieldset"><legend class="${BLOCK}__label">${escape(text('page.copy'))}</legend>`
+    + `<p class="${BLOCK}__hint">${escape(text('page.copy_hint'))}</p>`
+    + `<div class="${BLOCK}__actions"><div class="${BLOCK}__picker ${BLOCK}__picker--platform">`
+    + `<select name="platform" class="${BLOCK}__select" aria-label="${escape(text('page.platform'))}">${platforms}`
+    + `</select>${icon('chevron', 'chevron')}</div>${buttons}</div>`
+    + `<p class="${BLOCK}__status ${BLOCK}__copy-status" role="status" aria-live="polite"></p>`
+    + `<textarea class="${BLOCK}__copy-box" readonly hidden aria-label="${escape(text('page.copy_text'))}"></textarea>`
+    + '</fieldset>';
 }
 
 function togetherLabel(count, text) {
@@ -145,8 +172,8 @@ function render(el, state, text) {
   el.innerHTML = `<div class="${BLOCK}"><h1 class="${BLOCK}__title">${escape(text('page.title'))}</h1>${body}</div>`;
 }
 
-function reportUrl(baseUrl, project, scope, formats, sections) {
-  const params = new URLSearchParams({ project, format: formats.join(','), sections: sections.join(',') });
+function reportUrl(baseUrl, project, scope, formats, sections, shape = {}) {
+  const params = new URLSearchParams({ project, format: formats.join(','), sections: sections.join(','), ...shape });
   const [kind, value] = scope.split(/:(.*)/su);
   if (kind !== 'main') {
     params.set(kind, value);
@@ -207,12 +234,80 @@ async function download(el, start, submitted, as) {
   }
 }
 
+async function textFrom(url) {
+  const response = await fetch(url, { credentials: 'same-origin' });
+  if (!response.ok) {
+    throw new Error(await failureOf(response));
+  }
+  return response.text();
+}
+
+function copySource(el, start, fields, kind) {
+  const { baseUrl, component } = start;
+  const formats = checkedValues(fields.formats);
+  const sections = checkedValues(fields.sections);
+  if (sections.length === 0 || (kind === 'link' && formats.length === 0)) {
+    return { missing: sections.length === 0 ? 'page.no_sections' : 'page.no_formats' };
+  }
+  if (kind === 'link') {
+    const link = reportUrl(baseUrl, component.key, fields.scope.value, formats, sections);
+    return { produce: () => Promise.resolve(new URL(link, el.ownerDocument.baseURI).href) };
+  }
+  const url = reportUrl(baseUrl, component.key, fields.scope.value, ['markdown'], sections,
+    { layout: kind, flavor: fields.platform.value });
+  return { produce: () => textFrom(url) };
+}
+
+async function written(pending) {
+  const clipboard = globalThis.navigator?.clipboard;
+  if (!clipboard?.write || !globalThis.ClipboardItem) {
+    return false;
+  }
+  const item = new globalThis.ClipboardItem({
+    'text/plain': pending.then((value) => new Blob([value], { type: 'text/plain' })),
+  });
+  return clipboard.write([item]).then(() => true, () => false);
+}
+
+async function copy(el, start, submitted, kind) {
+  const { text } = start;
+  const status = el.querySelector(`.${BLOCK}__copy-status`);
+  const box = el.querySelector(`.${BLOCK}__copy-box`);
+  box.hidden = true;
+  status.classList.remove(`${BLOCK}__status--error`);
+  const source = copySource(el, start, submitted.elements, kind);
+  if (source.missing) {
+    fail(status, text(source.missing));
+    return;
+  }
+  status.textContent = text('page.copying');
+  const pending = source.produce();
+  const settled = pending.then((value) => ({ value }), (error) => ({ error }));
+  const copied = await written(pending);
+  const outcome = await settled;
+  if (outcome.error) {
+    fail(status, text('page.copy_failed', outcome.error.message));
+    return;
+  }
+  if (copied) {
+    status.textContent = text(`page.copied_${kind}`);
+    return;
+  }
+  box.value = outcome.value;
+  box.hidden = false;
+  box.focus();
+  box.select();
+  status.textContent = text('page.copy_manual');
+}
+
 function startReportPage({ el, baseUrl, component, branchLike, intl }) {
   const text = textFor(intl);
   const state = { scopes: null, selected: currentScope(branchLike) };
   const onSubmit = (event) => {
     event.preventDefault();
-    return download(el, { baseUrl, component, text }, event.target, event.submitter?.value);
+    const as = event.submitter?.value;
+    const start = { baseUrl, component, text };
+    return as in COPIES ? copy(el, start, event.target, COPIES[as]) : download(el, start, event.target, as);
   };
   const onChange = (event) => offerFormats(el, event.target, text);
   render(el, state, text);

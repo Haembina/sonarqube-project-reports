@@ -42,9 +42,23 @@ public record Report(ReportTarget target, Set<ReportSection> sections, QualityGa
     }
 
     public record Links(@Nullable String repository, @Nullable String repositoryUrl, @Nullable String scopeUrl,
-        @Nullable String sonarUrl, @Nullable String pullRequestTitle) {
+        @Nullable String sonarUrl, @Nullable String pullRequestTitle, @Nullable GitProvider provider,
+        @Nullable String linePattern) {
 
         public static final Links NONE = new Links(null, null, null, null, null);
+
+        public Links(@Nullable String repository, @Nullable String repositoryUrl, @Nullable String scopeUrl,
+            @Nullable String sonarUrl, @Nullable String pullRequestTitle) {
+            this(repository, repositoryUrl, scopeUrl, sonarUrl, pullRequestTitle, null, null);
+        }
+
+        @Nullable
+        public String lineUrl(@Nullable String path, @Nullable Integer line) {
+            if (linePattern == null || path == null || line == null || line <= 0) {
+                return null;
+            }
+            return linePattern.replace("{path}", path.replace(" ", "%20")).replace("{line}", String.valueOf(line));
+        }
     }
 
     public record LineCoverage(String path, List<Integer> uncovered, List<PartLine> partial) {
