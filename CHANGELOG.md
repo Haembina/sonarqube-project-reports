@@ -2,6 +2,13 @@
 
 Written by `@haembina/release`, never by hand (rule D9).
 
+## 0.4.1 (2026-11-06)
+
+### Bug Fixes
+
+* report tables fit the page in HTML, PDF and EPUB, as cards on a phone
+* a comment's paths wrap after each slash, so its tables fit the comment box
+
 ## 0.4.0 (2026-11-06)
 
 ### Features
