@@ -29,6 +29,7 @@ public final class ReportXhtml {
     private static final String SPAN_END = "</span>";
     private static final String NUMBER = "number";
     private static final String SLASH = "/";
+    private static final String NUMBER_CELL = "<td class=\"report-table__cell report-table__cell--" + NUMBER + "\"";
     private static final String RATINGS = "ABCDE";
     private static final String SEPARATOR = " · ";
     private static final List<String> STATUS_TONES = List.of("pass", "fail", "none");
@@ -194,12 +195,11 @@ public final class ReportXhtml {
     }
 
     private static String numeric(String text) {
-        return "<td class=\"report-table__cell report-table__cell--" + NUMBER + "\">" + escape(text) + CELL_END;
+        return NUMBER_CELL + ">" + escape(text) + CELL_END;
     }
 
     private static String labelled(String text, Message label) {
-        return "<td class=\"report-table__cell report-table__cell--" + NUMBER + "\" data-label=\""
-            + escape(label.text()) + "\">" + escape(text) + CELL_END;
+        return NUMBER_CELL + " data-label=\"" + escape(label.text()) + "\">" + escape(text) + CELL_END;
     }
 
     private static String label(String text, String icon) {
@@ -231,8 +231,7 @@ public final class ReportXhtml {
 
     private static String value(String text, boolean rating) {
         if (rating && text.length() == 1 && RATINGS.contains(text)) {
-            return "<td class=\"report-table__cell report-table__cell--" + NUMBER + "\">"
-                + badge(text, text.toLowerCase(Locale.ROOT)) + CELL_END;
+            return NUMBER_CELL + ">" + badge(text, text.toLowerCase(Locale.ROOT)) + CELL_END;
         }
         return numeric(text);
     }

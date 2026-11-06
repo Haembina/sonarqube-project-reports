@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 final class MarkdownText {
 
-    static final String BREAK = "​";
+    static final String BREAK = Character.toString(0x200B);
     private static final String SLASH = "/";
 
     private MarkdownText() {
