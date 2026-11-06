@@ -1,8 +1,10 @@
 package com.haembina.projectreports.report.markdown;
 
+import static com.haembina.projectreports.report.markdown.MarkdownText.breakable;
 import static com.haembina.projectreports.report.markdown.MarkdownText.cell;
 import static com.haembina.projectreports.report.markdown.MarkdownText.code;
-import static com.haembina.projectreports.report.markdown.MarkdownText.linkedCode;
+import static com.haembina.projectreports.report.markdown.MarkdownText.linkedPath;
+import static com.haembina.projectreports.report.markdown.MarkdownText.path;
 import static com.haembina.projectreports.report.markdown.MarkdownText.status;
 
 import com.haembina.projectreports.l10n.Message;
@@ -49,31 +51,31 @@ final class MarkdownTables {
             heads(Message.COLUMN_SEVERITY, Message.COLUMN_TYPE, Message.COLUMN_RULE, Message.COLUMN_LOCATION,
                 Message.COLUMN_MESSAGE), "| --- | --- | --- | --- | --- |",
             rows(view.issues(), issue -> List.of(cell(issue.severity()), cell(issue.type()), code(issue.rule()),
-                linkedCode(issue.location(), issue.locationUrl()), cell(issue.message())))));
+                linkedPath(issue.location(), issue.locationUrl()), cell(issue.message())))));
         add(tables, view, new Table(ReportSection.HOTSPOTS, ReportIcons.HOTSPOTS,
             Message.HEADING_HOTSPOTS.text(view.hotspots().size()), Message.EMPTY_HOTSPOTS.text(),
             heads(Message.COLUMN_PROBABILITY, Message.COLUMN_CATEGORY, Message.COLUMN_RULE, Message.COLUMN_LOCATION,
                 Message.COLUMN_MESSAGE, Message.COLUMN_STATUS), "| --- | --- | --- | --- | --- | --- |",
             rows(view.hotspots(), hotspot -> List.of(cell(hotspot.probability()), cell(hotspot.category()),
-                code(hotspot.rule()), linkedCode(hotspot.location(), hotspot.locationUrl()), cell(hotspot.message()),
+                code(hotspot.rule()), linkedPath(hotspot.location(), hotspot.locationUrl()), cell(hotspot.message()),
                 cell(hotspot.status())))));
         add(tables, view, new Table(ReportSection.FILES, ReportIcons.FILES,
             Message.HEADING_FILES.text(view.files().size()), Message.EMPTY_FILES.text(),
             heads(Message.COLUMN_FILE, Message.METRIC_NCLOC, Message.METRIC_COVERAGE, Message.COLUMN_UNCOVERED_LINES,
                 Message.METRIC_DUPLICATED_LINES_DENSITY, Message.COLUMN_OPEN_ISSUES),
             "| --- | ---: | ---: | ---: | ---: | ---: |",
-            rows(view.files(), file -> List.of(code(file.path()), cell(file.lines()), cell(file.coverage()),
+            rows(view.files(), file -> List.of(path(file.path()), cell(file.lines()), cell(file.coverage()),
                 cell(file.uncovered()), cell(file.duplicated()), cell(file.issues())))));
         add(tables, view, new Table(ReportSection.COVERAGE, ReportIcons.COVERAGE_LINES,
             Message.HEADING_COVERAGE.text(view.coverage().size()), hiddenOr(view, Message.EMPTY_COVERAGE),
             heads(Message.COLUMN_FILE, Message.COLUMN_UNCOVERED_LINES, Message.COLUMN_PARTLY_COVERED),
-            "| --- | --- | --- |", rows(view.coverage(), lines -> List.of(code(lines.path()), cell(lines.uncovered()),
+            "| --- | --- | --- |", rows(view.coverage(), lines -> List.of(path(lines.path()), cell(lines.uncovered()),
                 cell(lines.partial())))));
         add(tables, view, new Table(ReportSection.DUPLICATIONS, ReportIcons.DUPLICATED_BLOCKS,
             Message.HEADING_DUPLICATIONS.text(view.duplications().size()), hiddenOr(view, Message.EMPTY_DUPLICATIONS),
             heads(Message.COLUMN_FILE, Message.COLUMN_LINES, Message.COLUMN_ALSO_IN), "| --- | --- | --- |",
-            rows(view.duplications(), block -> List.of(code(block.path()), cell(block.lines()),
-                cell(block.copies())))));
+            rows(view.duplications(), block -> List.of(path(block.path()), cell(block.lines()),
+                cell(breakable(block.copies()))))));
         return List.copyOf(tables);
     }
 

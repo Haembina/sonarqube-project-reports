@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 
 final class MarkdownText {
 
+    static final String BREAK = Character.toString(0x200B);
+    private static final String SLASH = "/";
+
     private MarkdownText() {
     }
 
@@ -20,8 +23,16 @@ final class MarkdownText {
         return "`" + value.replace("`", "'").replace("|", "\\|").replace("\n", " ") + "`";
     }
 
-    static String linkedCode(String value, @Nullable String url) {
-        return url == null ? code(value) : "[" + code(value) + "](" + address(url) + ")";
+    static String path(String value) {
+        return code(breakable(value));
+    }
+
+    static String linkedPath(String value, @Nullable String url) {
+        return url == null ? path(value) : "[" + path(value) + "](" + address(url) + ")";
+    }
+
+    static String breakable(String value) {
+        return value.replace(SLASH, SLASH + BREAK);
     }
 
     static String link(@Nullable String url, String text) {

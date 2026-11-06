@@ -60,8 +60,9 @@ class CommentReportRendererTest {
             | Severity | Type | Rule | Location | Message |
             | --- | --- | --- | --- | --- |
             | Blocker | Code smell | `javascript:S3516` | \
-            [`src/app.js:2`](https://github.com/Acme/app/blob/abc/src/app.js#L2) | Refactor \\| this &lt;function&gt; |
-            """).contains("| `src/app.js` | 12 | 50 % | — | — | 2 |\n\n</details>\n")
+            [`src/\u200Bapp.js:2`](https://github.com/Acme/app/blob/abc/src/app.js#L2) \
+            | Refactor \\| this &lt;function&gt; |
+            """).contains("| `src/\u200Bapp.js` | 12 | 50 % | — | — | 2 |\n\n</details>\n")
             .doesNotContain("#### Measures", "<img", "<p ");
     }
 

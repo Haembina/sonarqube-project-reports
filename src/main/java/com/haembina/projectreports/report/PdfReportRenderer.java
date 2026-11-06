@@ -24,6 +24,11 @@ final class PdfReportRenderer implements ReportRenderer {
         public String imageSource(String asset) {
             return HtmlReportRenderer.dataUri("image/png", asset);
         }
+
+        @Override
+        public String screenStyles() {
+            return "";
+        }
     };
 
     @Override
