@@ -38,6 +38,18 @@ class HotspotCollectorTest {
     }
 
     @Test
+    void readsTheWholeTargetAtExactlyTheCap() {
+        FakeConnector connector = new FakeConnector((path, params) -> "1".equals(params.get("p"))
+            ? hotspots(SearchPager.RESULT_CAP, "whole") : hotspots(SearchPager.RESULT_CAP));
+
+        List<Report.Hotspot> found = new HotspotCollector(new SearchPager(new LocalApi(connector))).collect(TARGET,
+            List.of(new Report.FileMeasures("acme:src/a.js", "src/a.js", Map.of())));
+
+        assertThat(found).extracting(Report.Hotspot::key).containsExactly("whole");
+        assertThat(connector.calls()).noneMatch(call -> call.containsKey("files"));
+    }
+
+    @Test
     void readsFileByFileOverTheCap() {
         FakeConnector connector = new FakeConnector((path, params) -> params.containsKey("files")
             ? hotspots(1, params.get("files").replace("src/", "").replace(".js", ""))

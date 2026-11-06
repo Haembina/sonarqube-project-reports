@@ -106,6 +106,14 @@ class LinkCollectorTest {
     }
 
     @Test
+    void infersTheProviderOfAnUnboundRepositoryFromItsAddress() {
+        Report.Links links = collect(new ReportTarget("acme", "dev", null), FakeConnector.MISSING,
+            "{\"links\": [{\"type\": \"scm\", \"url\": \"https://github.com/acme/app\"}]}", "{\"settings\": []}", "{}");
+
+        assertThat(links.scopeUrl()).isEqualTo("https://github.com/acme/app/tree/dev");
+    }
+
+    @Test
     void linksNothingButSonarQubeWithoutARepository() {
         Report.Links main = collect(new ReportTarget("acme", null, null), FakeConnector.MISSING, NO_LINKS,
             "{\"settings\": []}", "{}");
