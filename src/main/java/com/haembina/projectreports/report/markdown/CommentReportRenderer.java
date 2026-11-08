@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 public final class CommentReportRenderer implements ReportRenderer {
 
     static final int LIMIT = 65_536;
-    private static final int RESERVE = 4_096;
+    static final int RESERVE = 4_096;
 
     private final Optional<GitProvider> flavor;
 
@@ -49,7 +49,7 @@ public final class CommentReportRenderer implements ReportRenderer {
         return text.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    private static boolean rows(StringBuilder text, MarkdownTables.Table table, @Nullable String sonarUrl,
+    static boolean rows(StringBuilder text, MarkdownTables.Table table, @Nullable String sonarUrl,
         boolean full) {
         List<List<String>> rows = table.rows();
         if (rows.isEmpty()) {
