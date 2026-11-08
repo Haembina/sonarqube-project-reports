@@ -117,6 +117,35 @@ class CommentReportRendererTest {
             .doesNotContain("| Low |");
     }
 
+    private static MarkdownTables.Table issues(List<List<String>> rows) {
+        return new MarkdownTables.Table(ReportSection.ISSUES, "", "Issues", "No issues.", List.of("Issue"), "|---|",
+            rows);
+    }
+
+    @Test
+    void showsARowEndingExactlyAtTheRoomLeftAndCutsOneThatPassesIt() {
+        MarkdownTables.Table table = issues(List.of(List.of("row")));
+        String line = MarkdownText.row(List.of("row"));
+        int room = CommentReportRenderer.LIMIT - CommentReportRenderer.RESERVE - table.header().length()
+            - line.length();
+
+        StringBuilder fits = new StringBuilder("x".repeat(room));
+        assertThat(CommentReportRenderer.rows(fits, table, "https://sonar.test", false)).isFalse();
+        assertThat(fits.toString()).endsWith(line);
+
+        StringBuilder over = new StringBuilder("x".repeat(room + 1));
+        assertThat(CommentReportRenderer.rows(over, table, "https://sonar.test", false)).isTrue();
+        assertThat(over.toString()).doesNotContain(line).contains("[1 more in SonarQube](https://sonar.test)");
+    }
+
+    @Test
+    void anEmptySectionKeepsWhetherAnEarlierOneWasCut() {
+        StringBuilder text = new StringBuilder();
+        assertThat(CommentReportRenderer.rows(text, issues(List.of()), null, true)).isTrue();
+        assertThat(CommentReportRenderer.rows(text, issues(List.of()), null, false)).isFalse();
+        assertThat(text).hasToString("No issues.\nNo issues.\n");
+    }
+
     @Test
     void endsWithEveryRowWhenTheyFit() {
         assertThat(render(Optional.of(GitProvider.GITHUB), linked(SampleReport.githubLinks())))
