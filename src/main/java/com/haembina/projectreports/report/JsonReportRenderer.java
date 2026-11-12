@@ -10,7 +10,7 @@ import java.util.Set;
 final class JsonReportRenderer implements ReportRenderer {
 
     private static final Set<String> RENDERING_HINTS = Set.of("provider", "linePattern");
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls()
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
         .addSerializationExclusionStrategy(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes field) {
@@ -25,6 +25,6 @@ final class JsonReportRenderer implements ReportRenderer {
 
     @Override
     public byte[] render(Report report) {
-        return GSON.toJson(report).getBytes(StandardCharsets.UTF_8);
+        return gson.toJson(report).getBytes(StandardCharsets.UTF_8);
     }
 }
