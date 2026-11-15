@@ -2,6 +2,12 @@
 
 Written by `@haembina/release`, never by hand (rule D9).
 
+## 0.4.2 (2026-11-15)
+
+### Bug Fixes
+
+* update the libraries it is built on
+
 ## 0.4.1 (2026-11-06)
 
 ### Bug Fixes
